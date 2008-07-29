@@ -7,7 +7,7 @@ content.
 
 The catalog implementation is using BTree set operations like union, multiunion
 and intersection. Those operations are fairly fast, especially when everything
-is in memory. However, the catalog implementation is rather naïve which leads
+is in memory. However, the catalog implementation is rather naive which leads
 to lots of set operations on rather big sets.
 
 Query plan
