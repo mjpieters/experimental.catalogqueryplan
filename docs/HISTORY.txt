@@ -1,0 +1,50 @@
+Changelog
+=========
+
+0.7 - Unreleased
+----------------
+
+
+0.6 - 2008-07-03
+----------------
+
+* Use a volatile instance variable to store the prioritymap.
+  [mj]
+
+0.5 - 2008/06/23
+----------------
+
+* DateRangeIndex shouldn't overwrite the semi-request passed into the 
+  apply_index method.
+  [mj]
+
+0.4 - 2008/06/23
+----------------
+
+* DateRangeIndex now doesn't assume that REQUEST is available.
+  [tesdal]
+
+0.3
+---
+
+* Handle request being a dictionary.
+  [tesdal]
+
+0.3
+---
+
+* Refactored patches into multiple files.
+  [tesdal]
+
+* Dynamic query optimization based on result set analysis
+  from queries against the same indexes.
+  [tesdal]
+
+* Manual query optimization based on typical usage pattern.
+  [tesdal]
+
+0.1
+---
+
+* Initial release
+
