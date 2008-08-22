@@ -1,7 +1,10 @@
 Changelog
 =========
 
-0.7 - Unreleased
+0.8 - Unreleased
+----------------
+
+0.7 - 2008-08-22
 ----------------
 
 * Check whether we're supposed to use daterangeindex
