@@ -4,6 +4,9 @@ Changelog
 0.7 - Unreleased
 ----------------
 
+* Check whether we're supposed to use daterangeindex
+  at all before retrieving cached data.
+  [tesdal]
 
 0.6 - 2008-07-03
 ----------------

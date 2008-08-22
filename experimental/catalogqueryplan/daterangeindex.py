@@ -3,16 +3,16 @@ from Products.PluginIndexes.common.util import parseIndexRequest
 
 
 def daterangeindex_apply_index( self, request, cid='', res=None):
+    record = parseIndexRequest( request, self.getId() )
+    if record.keys is None:
+        return None
+
     REQUEST = getattr(self, 'REQUEST', None)
     if REQUEST is not None:
         requestkey = '_daterangeindex_%s' % self.getId()
         cached = REQUEST.get(requestkey, None)
         if cached is not None:
             return intersection(res, cached), ( self._since_field, self._until_field )
-
-    record = parseIndexRequest( request, self.getId() )
-    if record.keys is None:
-        return None
 
     term        = self._convertDateTime( record.keys[0] )
 
