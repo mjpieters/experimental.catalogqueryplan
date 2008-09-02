@@ -62,3 +62,5 @@ def patch_daterangeindex():
     from Products.PluginIndexes.DateRangeIndex.DateRangeIndex import DateRangeIndex
     DateRangeIndex._apply_index = daterangeindex_apply_index
 
+    from catalog import ADVANCEDTYPES
+    ADVANCEDTYPES.append(DateRangeIndex)

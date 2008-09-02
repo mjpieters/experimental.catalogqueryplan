@@ -4,6 +4,11 @@ Changelog
 0.8 - Unreleased
 ----------------
 
+* Let each index patch register itself with the ADVANCEDTYPES list.
+  This should enable patching of other indexes as well, and remove
+  the dependency on ExtendedPathIndex.
+  [tesdal]
+
 0.7 - 2008-08-22
 ----------------
 

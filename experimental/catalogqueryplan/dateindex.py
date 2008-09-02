@@ -85,3 +85,6 @@ def dateindex_apply_index( self, request, cid='', type=type, res=None):
 def patch_dateindex():
     from Products.PluginIndexes.DateIndex.DateIndex import DateIndex
     DateIndex._apply_index = dateindex_apply_index
+
+    from catalog import ADVANCEDTYPES
+    ADVANCEDTYPES.append(DateIndex)

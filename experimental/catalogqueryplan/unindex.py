@@ -72,3 +72,9 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
 def patch_unindex():
     from Products.PluginIndexes.common.UnIndex import UnIndex
     UnIndex._apply_index = unindex_apply_index
+
+    from catalog import ADVANCEDTYPES
+    from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex
+    ADVANCEDTYPES.append(FieldIndex)
+    from Products.PluginIndexes.KeywordIndex.KeywordIndex import KeywordIndex
+    ADVANCEDTYPES.append(KeywordIndex)

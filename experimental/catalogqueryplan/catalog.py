@@ -1,15 +1,11 @@
 from BTrees.IIBTree import weightedIntersection
 
 from Products.ZCatalog.Lazy import LazyMap, LazyCat
-from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex
-from Products.PluginIndexes.KeywordIndex.KeywordIndex import KeywordIndex
-from Products.PluginIndexes.DateIndex.DateIndex import DateIndex
-from Products.PluginIndexes.DateRangeIndex.DateRangeIndex import DateRangeIndex
-from Products.ExtendedPathIndex.ExtendedPathIndex import ExtendedPathIndex
 
-advancedtypes = (FieldIndex, KeywordIndex, DateIndex, DateRangeIndex, ExtendedPathIndex)
+ADVANCEDTYPES = []
 
 def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
+    advancedtypes = tuple(ADVANCEDTYPES)
     rs = None # resultset
 
     # Note that if the indexes find query arguments, but the end result

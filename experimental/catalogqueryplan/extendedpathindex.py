@@ -185,6 +185,12 @@ def extendedpathindex_search(self, path, default_level=0, depth=-1, navtree=0,
 
 
 def patch_extendedpathindex():
-    from Products.ExtendedPathIndex.ExtendedPathIndex import ExtendedPathIndex
-    ExtendedPathIndex._apply_index = extendedpathindex_apply_index
-    ExtendedPathIndex.search = extendedpathindex_search
+    try:
+        from Products.ExtendedPathIndex.ExtendedPathIndex import ExtendedPathIndex
+        ExtendedPathIndex._apply_index = extendedpathindex_apply_index
+        ExtendedPathIndex.search = extendedpathindex_search
+
+        from catalog import ADVANCEDTYPES
+        ADVANCEDTYPES.append(ExtendedPathIndex)
+    except ImportError:
+        pass
