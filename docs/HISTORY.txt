@@ -1,7 +1,11 @@
 Changelog
 =========
 
-0.8 - Unreleased
+0.9 - Unreleased
+----------------
+
+
+0.8 - 2008-09-03
 ----------------
 
 * Let each index patch register itself with the ADVANCEDTYPES list.
