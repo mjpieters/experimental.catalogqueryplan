@@ -4,6 +4,8 @@ Changelog
 0.9 - Unreleased
 ----------------
 
+* Added support for LinguaPlone's LanguageIndex.
+  [hannosch]
 
 0.8 - 2008-09-03
 ----------------
