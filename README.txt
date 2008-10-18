@@ -23,7 +23,7 @@ into the indexes to allow the indexes to limit the result set as soon as
 possible internally. When calculating a path search, there is no need to look
 in all 150000 results if the portal type index has already limited the possible
 result to 10000. If we have already limited the result to 10000 results, all
-set operations are going to be significantly faster.  Solution
+set operations are going to be significantly faster.
 
 We identify different searches by the list of indexes that are searched. If
 there are no query plans for a set of indexes, the query is run like normal
