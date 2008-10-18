@@ -8,7 +8,6 @@ setup(name='experimental.catalogqueryplan',
       description="Static query optimized with one plan",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
@@ -25,9 +24,5 @@ setup(name='experimental.catalogqueryplan',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          # -*- Extra requirements: -*-
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       )
