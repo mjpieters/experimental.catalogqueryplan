@@ -55,7 +55,9 @@ def languageindex_search(self, language, fallback=True, res=None):
     else:
         subs = [sub]
 
-    if res is not None:
+    if not fallback and res is not None:
+        # We do not support any optimization when fallback is enabled.
+        #
         # TODO: The core loop is not in C here. Casual benchmarks suggest this
         # is still more effecient than trying to move it to C. The problem is
         # that we only have an IISet of docids as an input. We need to filter
