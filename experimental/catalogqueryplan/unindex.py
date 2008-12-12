@@ -56,11 +56,17 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
         for key in record.keys:
             set=index.get(key, None)
             if set is None:
-                set = IISet(())
+                if set_func is union:
+                    # If None, we can't possibly get a bigger result set with union
+                    continue
+                else:
+                    # If None, we can't possibly get a smaller result set
+                    return IISet(())
             elif isinstance(set, int):
                 set = IISet((set,))
-            # set can't be bigger than res
-            set = intersection(set, res)
+            else:
+                # set can't be bigger than res
+                set = intersection(set, res)
             r = set_func(r, set)
 
     if isinstance(r, int):  r=IISet((r,))
