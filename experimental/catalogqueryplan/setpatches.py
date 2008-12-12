@@ -22,7 +22,7 @@ def patch_intersection(treetype, settype):
                     return o1
 
                 l2 = len(o2)
-                if l2 == 0 or l2 == l1:
+                if l2 == 0:
                     return l2
 
                 if l1 < l2:
