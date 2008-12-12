@@ -4,6 +4,12 @@ Changelog
 1.0 - unreleased
 ----------------
 
+* Monkeypatch intersect to handle big/tiny intersects in Python
+  [tesdal]
+
+* Improved UnIndex query, to avoid redundant intersections
+  [tesdal]
+
 * Clarified LanguageIndex support. We are missing fallback support right now
   and now disable the optimization when fallback is enabled.
   [hannosch, mj]
