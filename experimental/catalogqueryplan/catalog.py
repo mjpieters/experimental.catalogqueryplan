@@ -56,7 +56,7 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 if not r:
                     return LazyCat([])
                 w, rs = weightedIntersection(rs, r)
-    
+
     if rs is None:
         # None of the indexes found anything to do with the request
         # We take this to mean that the query was empty (an empty filter)

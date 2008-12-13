@@ -4,6 +4,9 @@ Changelog
 1.0 - unreleased
 ----------------
 
+* Added performance tests.
+  [tesdal]
+
 * Fixed a bug with UnIndex return result missing index id
   [tesdal]
 

@@ -46,6 +46,7 @@ def patch_intersection(treetype, settype):
 
         return setintersection(o1, o2)
 
+    treetype._old_intersection = treetype.intersection
     treetype.intersection = intersection
 
 
@@ -65,3 +66,6 @@ def apply():
     from BTrees.OOBTree  import OOSet
     from BTrees import OOBTree
     patch_intersection(OOBTree, OOSet)
+
+    # XXX PATCH DIFFERENCE AS WELL
+    # If o1 is small and o2 is big, check in python. if o1 is big use regular scan
