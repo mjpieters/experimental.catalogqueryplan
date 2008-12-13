@@ -4,6 +4,9 @@ Changelog
 1.0 - unreleased
 ----------------
 
+* Added tests for intersection, fixed a bug with empty second argument set
+  [tesdal]
+
 * Monkeypatch intersect to handle big/tiny intersects in Python
   [tesdal]
 

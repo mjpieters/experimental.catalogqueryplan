@@ -8,7 +8,7 @@ def patch_intersection(treetype, settype):
         # Bail out as soon as possible if one or both are None
         if o1 is None:
             if o2 is None:
-                return setintersection(o1, o2)
+                return None
             else:
                 return o2
         else:
@@ -23,7 +23,7 @@ def patch_intersection(treetype, settype):
 
                 l2 = len(o2)
                 if l2 == 0:
-                    return l2
+                    return o2
 
                 if l1 < l2:
                     ls = l1
