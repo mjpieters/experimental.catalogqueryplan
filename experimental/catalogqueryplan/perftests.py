@@ -4,7 +4,8 @@ import unittest
 from BTrees.IIBTree import intersection, _old_intersection
 from BTrees.IIBTree import IISet, IITreeSet, IIBTree
 
-DATASETSIZE = 1000000
+SMALLSETSIZE = 100
+BIGSETSIZE = 100000
 
 class TestIntersection(unittest.TestCase):
 
@@ -15,7 +16,7 @@ class TestIntersection(unittest.TestCase):
             res = small.intersection(large)
             py+=(time()-start)
 
-        print 'Py x10: %.6f' % (py)
+        print '\nPy x10:  %.6f' % (py)
 
     def timing(self, small, large):
         new = 0.0
@@ -33,47 +34,65 @@ class TestIntersection(unittest.TestCase):
         print 'New x10: %.6f' % (new)
 
     def test_heavy_start(self):
-        size = DATASETSIZE
-        small = IISet(xrange(10))
-        large = IITreeSet(xrange(size))
+        bigsize = BIGSETSIZE
+        smallsize = SMALLSETSIZE
+        small = IISet(xrange(smallsize))
+        large = IITreeSet(xrange(bigsize))
+        print '\nSmall set low values + large treeset'
+        self.timing(small, large)
+
+        small = IISet(xrange(smallsize))
+        large = IISet(xrange(bigsize))
         print '\nSmall set low values + large set'
         self.timing(small, large)
 
-        small = set(xrange(10))
-        large = set(xrange(size))
+        small = set(xrange(smallsize))
+        large = set(xrange(bigsize))
         self.pytiming(small, large)
 
     def test_heavy_end(self):
-        size = DATASETSIZE
-        small = IISet(xrange(size-10,size))
-        large = IITreeSet(xrange(size))
+        bigsize = BIGSETSIZE
+        smallsize = SMALLSETSIZE
+        small = IISet(xrange(bigsize-smallsize,bigsize))
+        large = IITreeSet(xrange(bigsize))
+        print '\nSmall set high values + large treeset'
+        self.timing(small, large)
+
+        small = IISet(xrange(bigsize-smallsize,bigsize))
+        large = IISet(xrange(bigsize))
         print '\nSmall set high values + large set'
         self.timing(small, large)
 
-        small = set(xrange(size-10,size))
-        large = set(xrange(size))
+        small = set(xrange(bigsize-smallsize,bigsize))
+        large = set(xrange(bigsize))
         self.pytiming(small, large)
 
     def test_even_dist(self):
-        size = DATASETSIZE
-        small = IISet(xrange(0, size, size/10))
-        large = IITreeSet(xrange(size))
+        bigsize = BIGSETSIZE
+        smallsize = SMALLSETSIZE
+        small = IISet(xrange(0, bigsize, bigsize/smallsize))
+        large = IITreeSet(xrange(bigsize))
+        print '\nSmall set even distribution + large treeset'
+        self.timing(small, large)
+
+        small = IISet(xrange(0, bigsize, bigsize/smallsize))
+        large = IISet(xrange(bigsize))
         print '\nSmall set even distribution + large set'
         self.timing(small, large)
 
-        small = set(xrange(0, size, size/10))
-        large = set(xrange(size))
+        small = set(xrange(0, bigsize, bigsize/smallsize))
+        large = set(xrange(bigsize))
         self.pytiming(small, large)
 
-    def test_large(self):
-        size = DATASETSIZE
-        small = IITreeSet(xrange(size))
-        large = IITreeSet(xrange(size))
+    def DONTtest_large(self):
+        bigsize = BIGSETSIZE
+        small = IITreeSet(xrange(bigsize))
+        large = IITreeSet(xrange(bigsize))
         print '\nLarge sets'
         self.timing(small, large)
 
-        small = set(xrange(size))
-        large = set(xrange(size))
+        small = set(xrange(bigsize))
+        large = set(xrange(bigsize))
         self.pytiming(small, large)
 
 

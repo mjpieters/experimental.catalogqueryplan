@@ -1,4 +1,4 @@
-SMALLSETSIZE = 50
+SMALLSETSIZE = 200
 BIGSMALLRATIO = 20
 def patch_intersection(treetype, settype):
 
