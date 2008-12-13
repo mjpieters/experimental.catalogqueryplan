@@ -61,7 +61,7 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
                     continue
                 else:
                     # If None, we can't possibly get a smaller result set
-                    return IISet(())
+                    return IISet(()), (self.id,)
             elif isinstance(set, int):
                 set = IISet((set,))
             else:
