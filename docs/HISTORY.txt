@@ -4,6 +4,11 @@ Changelog
 1.0 - unreleased
 ----------------
 
+* Monkeypatch difference to handle big/tiny difference in Python
+  This doesn't belong in queryplan, as it's only a BTree patch,
+  and should be refactored out.
+  [tesdal]
+
 * Added performance tests.
   [tesdal]
 

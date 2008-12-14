@@ -50,22 +50,53 @@ def patch_intersection(treetype, settype):
     treetype.intersection = intersection
 
 
+def patch_difference(treetype, settype):
+
+    setdifference = treetype.difference
+
+    def difference(o1, o2):
+        # Bail out as soon as possible if one or both are None
+        if not o1:
+            return o1
+        else:
+            if not o2:
+                return o1
+            else:
+                # Both are real sets, of unknown size
+                l1 = len(o1)
+                if l1 < SMALLSETSIZE:
+                    l2 = len(o2)
+                    if l2/l1 > BIGSMALLRATIO:
+                        new = settype()
+                        for i in o1:
+                            if not o2.has_key(i):
+                                new.insert(i)
+                        #print '% 10d  % 10d %s' % (ls, lb, new)
+                        return new
+
+        return setdifference(o1, o2)
+
+    treetype._old_difference = treetype.difference
+    treetype.difference = difference
+
+
 def apply():
     from BTrees.IIBTree  import IISet
     from BTrees import IIBTree
     patch_intersection(IIBTree, IISet)
+    patch_difference(IIBTree, IISet)
 
     from BTrees.IOBTree  import IOSet
     from BTrees import IOBTree
     patch_intersection(IOBTree, IOSet)
+    patch_difference(IOBTree, IOSet)
 
     from BTrees.OIBTree  import OISet
     from BTrees import OIBTree
     patch_intersection(OIBTree, OISet)
+    patch_difference(OIBTree, OISet)
 
     from BTrees.OOBTree  import OOSet
     from BTrees import OOBTree
     patch_intersection(OOBTree, OOSet)
-
-    # XXX PATCH DIFFERENCE AS WELL
-    # If o1 is small and o2 is big, check in python. if o1 is big use regular scan
+    patch_difference(OOBTree, OOSet)
