@@ -9,40 +9,40 @@ def patch_intersection(treetype, settype):
         if o1 is None:
             if o2 is None:
                 return None
-            else:
-                return o2
+            return o2
+        if o2 is None:
+            return o1
+
+        # Both are real sets, of unknown size
+        l1 = len(o1)
+        # If empty set, return
+        if l1 == 0:
+            return o1
+
+        l2 = len(o2)
+        if l2 == 0:
+            return o2
+        elif l1 == l2:
+            return setintersection(o1, o2)
+
+        if l1 < l2:
+            ls = l1
+            small = o1
+            lb = l2
+            big = o2
         else:
-            if o2 is None:
-                return o1
-            else:
-                # Both are real sets, of unknown size
-                l1 = len(o1)
-                # If empty set, return
-                if l1 == 0:
-                    return o1
+            ls = l2
+            small = o2
+            lb = l1
+            big = o1
 
-                l2 = len(o2)
-                if l2 == 0:
-                    return o2
-
-                if l1 < l2:
-                    ls = l1
-                    small = o1
-                    lb = l2
-                    big = o2
-                else:
-                    ls = l2
-                    small = o2
-                    lb = l1
-                    big = o1
-
-                if ls < SMALLSETSIZE and lb/ls > BIGSMALLRATIO:
-                    new = settype()
-                    for i in small:
-                        if big.has_key(i):
-                            new.insert(i)
-                    #print '% 10d  % 10d %s' % (ls, lb, new)
-                    return new
+        if ls < SMALLSETSIZE and lb/ls > BIGSMALLRATIO:
+            new = settype()
+            for i in small:
+                if big.has_key(i):
+                    new.insert(i)
+            #print '% 10d  % 10d %s' % (ls, lb, new)
+            return new
 
         return setintersection(o1, o2)
 
@@ -58,21 +58,19 @@ def patch_difference(treetype, settype):
         # Bail out as soon as possible if one or both are None
         if not o1:
             return o1
-        else:
-            if not o2:
-                return o1
-            else:
-                # Both are real sets, of unknown size
-                l1 = len(o1)
-                if l1 < SMALLSETSIZE:
-                    l2 = len(o2)
-                    if l2/l1 > BIGSMALLRATIO:
-                        new = settype()
-                        for i in o1:
-                            if not o2.has_key(i):
-                                new.insert(i)
-                        #print '% 10d  % 10d %s' % (ls, lb, new)
-                        return new
+        if not o2:
+            return o1
+        # Both are real sets, of unknown size
+        l1 = len(o1)
+        if l1 < SMALLSETSIZE:
+            l2 = len(o2)
+            if l2/l1 > BIGSMALLRATIO:
+                new = settype()
+                for i in o1:
+                    if not o2.has_key(i):
+                        new.insert(i)
+                #print '% 10d  % 10d %s' % (ls, lb, new)
+                return new
 
         return setdifference(o1, o2)
 

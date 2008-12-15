@@ -185,6 +185,22 @@ class TestDifference(unittest.TestCase):
         large = set(xrange(bigsize))
         self.pytiming(small, large)
 
+    def test_lookup(self):
+        bigsize = 1000000
+        smallsize = 1000
+        large = IISet(xrange(bigsize))
+        small = IISet(xrange(0, bigsize, bigsize/smallsize))
+
+        start = time()
+        for i in small:
+            a = large[i]
+        print "\ngetitem %.6f" % (time()-start)
+
+        for i in small:
+            a = large.has_key(i)
+        print "has_key %.6f" % (time()-start)
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
