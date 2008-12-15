@@ -8,7 +8,7 @@ class TestIntersection(unittest.TestCase):
     def test_empty(self):
         empty = IISet()
         self.failUnlessEqual(intersection(None, None), None)
-        self.failUnlessEqual(intersection(empty, empty), empty)
+        self.failUnlessEqual(list(intersection(empty, empty)), list(empty))
 
         s1 = IISet([1])
         s2 = IISet([2])
@@ -97,8 +97,8 @@ class TestDifference(unittest.TestCase):
         self.failUnlessEqual(difference(None, None), None)
         empty = IISet()
         self.failUnlessEqual(difference(None, empty), None)
-        self.failUnlessEqual(difference(empty, None), empty)
-        self.failUnlessEqual(difference(empty, empty), empty)
+        self.failUnlessEqual(list(difference(empty, None)), list(empty))
+        self.failUnlessEqual(list(difference(empty, empty)), list(empty))
 
         s1 = IISet([1])
         self.failUnlessEqual(list(difference(empty, s1)), [])

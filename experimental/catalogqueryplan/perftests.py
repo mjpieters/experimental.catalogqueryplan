@@ -5,34 +5,57 @@ from BTrees.IIBTree import intersection, _old_intersection
 from BTrees.IIBTree import difference, _old_difference
 from BTrees.IIBTree import IISet, IITreeSet, IIBTree
 
-SMALLSETSIZE = 100
-BIGSETSIZE = 100000
+SMALLSETSIZE = 30
+BIGSETSIZE = 1000000
+LOOP = 100
 
 class TestIntersection(unittest.TestCase):
 
     def pytiming(self, small, large):
         py = 0.0
-        for i in xrange(10):
+        loop = LOOP
+        for i in xrange(loop):
             start = time()
             res = small.intersection(large)
             py+=(time()-start)
 
-        print '\nPy x10:  %.6f' % (py)
+        print '\nPy x%s:  %.6f' % (loop, py)
 
     def timing(self, small, large):
         new = 0.0
         old = 0.0
-        for i in xrange(10):
-            start = time()
-            res = _old_intersection(small, large)
-            old+=(time()-start)
+        new2 = 0.0
+        loop = LOOP
+        for i in xrange(loop):
 
             start = time()
             res = intersection(small, large)
             new+=(time()-start)
 
-        print 'Old x10: %.6f' % (old)
-        print 'New x10: %.6f' % (new)
+            start = time()
+            res = _old_intersection(small, large)
+            old+=(time()-start)
+
+        print 'Old x%s: %.6f' % (loop, old)
+        print 'New x%s: %.6f' % (loop, new)
+
+    def test_None(self):
+        bigsize = BIGSETSIZE
+        large = IITreeSet(xrange(bigsize))
+        print '\nIntersection large, None'
+        self.timing(large, None)
+        print '\nIntersection None, large'
+        self.timing(None, large)
+
+    def test_empty(self):
+        bigsize = BIGSETSIZE
+        smallsize = 0
+        small = IISet(xrange(smallsize))
+        large = IITreeSet(xrange(bigsize))
+
+        print '\nIntersection empty set + large treeset'
+        self.timing(small, large)
+
 
     def test_heavy_start(self):
         bigsize = BIGSETSIZE
@@ -101,16 +124,18 @@ class TestDifference(unittest.TestCase):
 
     def pytiming(self, small, large):
         py = 0.0
+        loop = LOOP
         for i in xrange(10):
             start = time()
             res = small.difference(large)
             py+=(time()-start)
 
-        print '\nPy x10:  %.6f' % (py)
+        print '\nPy x%s:  %.6f' % (loop, py)
 
     def timing(self, small, large):
         new = 0.0
         old = 0.0
+        loop = LOOP
         for i in xrange(10):
             start = time()
             res = _old_difference(small, large)
@@ -120,8 +145,8 @@ class TestDifference(unittest.TestCase):
             res = difference(small, large)
             new+=(time()-start)
 
-        print 'Old x10: %.6f' % (old)
-        print 'New x10: %.6f' % (new)
+        print 'Old x%s: %.6f' % (loop, old)
+        print 'New x%s: %.6f' % (loop, new)
 
     def test_heavy_start(self):
         bigsize = BIGSETSIZE
@@ -199,6 +224,55 @@ class TestDifference(unittest.TestCase):
         for i in small:
             a = large.has_key(i)
         print "has_key %.6f" % (time()-start)
+
+    def test_findlargesmallset(self):
+        # Test different approaches to finding the large and small set
+        bigsize = 10
+        smallsize = 2
+        o1 = IISet(xrange(bigsize))
+        l1 = len(o1)
+        o2 = IISet(xrange(0, bigsize, bigsize/smallsize))
+        l2 = len(o2)
+
+        # 3 approaches: if/else, sorted and max/min
+        def alternative1():
+            if l1 < l2:
+                ls = l1
+                small = o1
+                lb = l2
+                big = o2
+            else:
+                ls = l2
+                small = o2
+                lb = l1
+                big = o1
+            return (ls, small), (lb, big)
+
+        def alternative2():
+            return sorted(((l2,o2), (l1,o1)))
+
+        def alternative3():
+            small = min((l2,o2),(l1,o1))
+            big = max((l2,o2),(l1,o1))
+            return small,big
+
+        self.failUnlessEqual(list(alternative1()), list(alternative2()))
+        self.failUnlessEqual(list(alternative1()), list(alternative3()))
+
+        start = time()
+        for i in xrange(1000):
+            alternative1()
+        print '\nif/else took %.6f' % (time()-start)
+
+        start = time()
+        for i in xrange(1000):
+            alternative2()
+        print 'sorted took  %.6f' % (time()-start)
+
+        start = time()
+        for i in xrange(1000):
+            alternative3()
+        print 'minmax took  %.6f' % (time()-start)
 
 
 def test_suite():

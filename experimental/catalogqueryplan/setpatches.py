@@ -5,25 +5,12 @@ def patch_intersection(treetype, settype):
     setintersection = treetype.intersection
 
     def intersection(o1, o2):
-        # Bail out as soon as possible if one or both are None
-        if o1 is None:
-            if o2 is None:
-                return None
-            return o2
-        if o2 is None:
-            return o1
-
-        # Both are real sets, of unknown size
-        l1 = len(o1)
-        # If empty set, return
-        if l1 == 0:
-            return o1
-
-        l2 = len(o2)
-        if l2 == 0:
-            return o2
-        elif l1 == l2:
+        if not o2 or not o1:
+            # Avoid len of unsized or zero division
             return setintersection(o1, o2)
+
+        l1 = len(o1)
+        l2 = len(o2)
 
         if l1 < l2:
             ls = l1
@@ -43,7 +30,6 @@ def patch_intersection(treetype, settype):
                     new.insert(i)
             #print '% 10d  % 10d %s' % (ls, lb, new)
             return new
-
         return setintersection(o1, o2)
 
     treetype._old_intersection = treetype.intersection
@@ -56,10 +42,8 @@ def patch_difference(treetype, settype):
 
     def difference(o1, o2):
         # Bail out as soon as possible if one or both are None
-        if not o1:
-            return o1
-        if not o2:
-            return o1
+        if not o1 or not o2:
+            return setdifference(o1, o2)
         # Both are real sets, of unknown size
         l1 = len(o1)
         if l1 < SMALLSETSIZE:
