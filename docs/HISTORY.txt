@@ -4,6 +4,10 @@ Changelog
 1.0 - unreleased
 ----------------
 
+* Optimize UnIndex.apply_index internally, sort sets for AND,
+  use multiunion for OR.
+  [tesdal]
+
 * Limit the number of if-statements in intersection,
   and added test for fastest way of finding max and min.
   [tesdal]

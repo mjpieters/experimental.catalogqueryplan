@@ -1,5 +1,5 @@
 from cgi import escape
-from BTrees.IIBTree import union, intersection
+from BTrees.IIBTree import union, intersection, multiunion
 from Products.PluginIndexes.common.util import parseIndexRequest
 from BTrees.IIBTree import IISet
 
@@ -42,32 +42,62 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
         if 'max' in opr_args: hi = max(record.keys)
         else: hi = None
         if hi:
-            setlist = index.items(lo,hi)
+            setlist = index.values(lo,hi)
         else:
-            setlist = index.items(lo)
+            setlist = index.values(lo)
 
-        for k, set in setlist:
-            if isinstance(set, int):
-                set = IISet((set,))
-            # set can't be bigger than res
-            set = intersection(set, res)
-            r = set_func(r, set)
+
+        # If we only use 1 key (default setting), intersect and return immediately
+        if res is not None and len(setlist) == 1:
+            return intersection(res, setlist[0]), (self.id,)
+
+        if operator == 'or':
+            r = multiunion(setlist)
+            if res is not None:
+                r = intersection(r, res)
+        else:
+            # For intersection, sort with smallest data set first
+            tmp = []
+            for s in setlist:
+                if isinstance(s, int):
+                    s = IISet((s,))
+                tmp.append(s)
+            setlist = sorted(tmp, key=len)
+            r = res
+            for s in setlist:
+                r = intersection(r, s)
+
     else: # not a range search
-        for key in record.keys:
-            set=index.get(key, None)
-            if set is None:
-                if set_func is union:
-                    # If None, we can't possibly get a bigger result set with union
+        # Filter duplicates, and sort by length
+        keys = set(record.keys)
+        setlist = []
+        for k in keys:
+            s = index.get(k, None)
+            # If None, try to bail early
+            if s is None:
+                if operator == 'or':
+                    # If union, we can't possibly get a bigger result
                     continue
-                else:
-                    # If None, we can't possibly get a smaller result set
-                    return IISet(()), (self.id,)
-            elif isinstance(set, int):
-                set = IISet((set,))
-            else:
-                # set can't be bigger than res
-                set = intersection(set, res)
-            r = set_func(r, set)
+                # If intersection, we can't possibly get a smaller result
+                return IISet(), (self.id,)
+            elif isinstance(s, int):
+                s = IISet((s,))
+            setlist.append(s)
+
+        # If we only use 1 key (default setting), intersect and return immediately
+        if res is not None and len(setlist) == 1:
+            return intersection(res, setlist[0]), (self.id,)
+
+        if operator == 'or':
+            r = multiunion(setlist)
+            if res is not None:
+                r = intersection(r, res)
+        else:
+            # For intersection, sort with smallest data set first
+            setlist = sorted(setlist, key=len)
+            r = res
+            for s in setlist:
+                r = intersection(r, s)
 
     if isinstance(r, int):  r=IISet((r,))
     if r is None:
