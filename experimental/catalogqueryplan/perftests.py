@@ -219,11 +219,33 @@ class TestDifference(unittest.TestCase):
         start = time()
         for i in small:
             a = large[i]
-        print "\ngetitem %.6f" % (time()-start)
+        print "\ngetitem distributed %.6f" % (time()-start)
 
+        start = time()
+        for i in small:
+            a = large[bigsize-1]
+        print "getitem end %.6f" % (time()-start)
+
+        start = time()
+        for i in small:
+            a = large[0]
+        print "getitem start %.6f" % (time()-start)
+
+        start = time()
         for i in small:
             a = large.has_key(i)
-        print "has_key %.6f" % (time()-start)
+        print "\nhas_key distributed %.6f" % (time()-start)
+
+        start = time()
+        for i in small:
+            a = large.has_key(bigsize-1)
+        print "has_key end %.6f" % (time()-start)
+
+        start = time()
+        for i in small:
+            a = large.has_key(0)
+        print "has_key start %.6f" % (time()-start)
+
 
     def test_findlargesmallset(self):
         # Test different approaches to finding the large and small set
