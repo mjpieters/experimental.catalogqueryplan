@@ -1,4 +1,5 @@
-from BTrees.IIBTree import union, multiunion, intersection
+from BTrees.IIBTree import union, multiunion
+from BTrees.IIBTree import intersection2 as intersection
 from Products.PluginIndexes.common.util import parseIndexRequest
 from BTrees.IIBTree import IISet
 

@@ -1,6 +1,7 @@
 import unittest
 
-from BTrees.IIBTree import intersection, difference
+from BTrees.IIBTree import intersection2 as intersection
+from BTrees.IIBTree import difference2 as difference
 from BTrees.IIBTree import IISet, IITreeSet, IIBTree
 
 from Products.PluginIndexes.FieldIndex.tests import testFieldIndex
@@ -14,6 +15,14 @@ class TestKeywordIndex(testKeywordIndex.TestKeywordIndex):
 from Products.PluginIndexes.DateIndex.tests import test_DateIndex
 class TestDateIndex(test_DateIndex.DI_Tests):
     pass
+
+from Products.ExtendedPathIndex.tests import testExtendedPathIndex
+class TestPathIndex(testExtendedPathIndex.TestPathIndex):
+    pass
+
+class TestExtendedPathIndex(testExtendedPathIndex.TestExtendedPathIndex):
+    pass
+
 
 class TestIntersection(unittest.TestCase):
     def test_empty(self):
@@ -189,4 +198,6 @@ def test_suite():
     suite.addTest(makeSuite(TestFieldIndex))
     suite.addTest(makeSuite(TestKeywordIndex))
     suite.addTest(makeSuite(TestDateIndex))
+    suite.addTest(makeSuite(TestPathIndex))
+    suite.addTest(makeSuite(TestExtendedPathIndex))
     return suite

@@ -1,8 +1,8 @@
 from time import time
 import unittest
 
-from BTrees.IIBTree import intersection, _old_intersection
-from BTrees.IIBTree import difference, _old_difference
+from BTrees.IIBTree import intersection, intersection2
+from BTrees.IIBTree import difference, difference2
 from BTrees.IIBTree import IISet, IITreeSet, IIBTree
 
 SMALLSETSIZE = 30
@@ -29,11 +29,11 @@ class TestIntersection(unittest.TestCase):
         for i in xrange(loop):
 
             start = time()
-            res = intersection(small, large)
+            res = intersection2(small, large)
             new+=(time()-start)
 
             start = time()
-            res = _old_intersection(small, large)
+            res = intersection(small, large)
             old+=(time()-start)
 
         print 'Old x%s: %.6f' % (loop, old)
@@ -138,11 +138,11 @@ class TestDifference(unittest.TestCase):
         loop = LOOP
         for i in xrange(10):
             start = time()
-            res = _old_difference(small, large)
+            res = difference(small, large)
             old+=(time()-start)
 
             start = time()
-            res = difference(small, large)
+            res = difference2(small, large)
             new+=(time()-start)
 
         print 'Old x%s: %.6f' % (loop, old)

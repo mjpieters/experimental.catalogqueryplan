@@ -3,6 +3,10 @@ Changelog
 
 1.0 - unreleased
 ----------------
+* Don't monkeypatch intersection as zc.relationship will try
+  to pickle the function.
+  Added new ExtendedPathIndex code.
+  [tesdal]
 
 * Optimize UnIndex.apply_index internally, sort sets for AND,
   use multiunion for OR.

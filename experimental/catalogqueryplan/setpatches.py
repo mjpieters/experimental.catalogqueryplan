@@ -32,8 +32,7 @@ def patch_intersection(treetype, settype):
             return new
         return setintersection(o1, o2)
 
-    treetype._old_intersection = treetype.intersection
-    treetype.intersection = intersection
+    treetype.intersection2 = intersection
 
 
 def patch_difference(treetype, settype):
@@ -58,8 +57,7 @@ def patch_difference(treetype, settype):
 
         return setdifference(o1, o2)
 
-    treetype._old_difference = treetype.difference
-    treetype.difference = difference
+    treetype.difference2 = difference
 
 
 def apply():

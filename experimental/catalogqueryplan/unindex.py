@@ -1,5 +1,6 @@
 from cgi import escape
-from BTrees.IIBTree import union, intersection, multiunion
+from BTrees.IIBTree import union, multiunion
+from BTrees.IIBTree import intersection2 as intersection
 from Products.PluginIndexes.common.util import parseIndexRequest
 from BTrees.IIBTree import IISet
 
@@ -53,8 +54,6 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
 
         if operator == 'or':
             r = multiunion(setlist)
-            if res is not None:
-                r = intersection(r, res)
         else:
             # For intersection, sort with smallest data set first
             tmp = []
@@ -90,8 +89,6 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
 
         if operator == 'or':
             r = multiunion(setlist)
-            if res is not None:
-                r = intersection(r, res)
         else:
             # For intersection, sort with smallest data set first
             setlist = sorted(setlist, key=len)
