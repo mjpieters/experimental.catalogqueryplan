@@ -1,4 +1,4 @@
-from BTrees.IIBTree import weightedIntersection
+from BTrees.IIBTree import weightedIntersection2 as weightedIntersection
 
 from Products.ZCatalog.Lazy import LazyMap, LazyCat
 

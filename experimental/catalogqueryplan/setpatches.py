@@ -35,6 +35,17 @@ def patch_intersection(treetype, settype):
     treetype.intersection2 = intersection
 
 
+def patch_weightedIntersection(treetype, settype):
+    setintersection = treetype.intersection2
+    weightedsetintersection = treetype.weightedIntersection
+
+    def weightedIntersection(o1, o2, w1=1, w2=1):
+        if isinstance(o1, settype) and isinstance(o2, settype):
+            return (w1+w2), setintersection(o1, o2)
+        return weightedsetintersection(o1, o2, w1, w2)
+    treetype.weightedIntersection2 = weightedIntersection
+
+
 def patch_difference(treetype, settype):
 
     setdifference = treetype.difference
@@ -64,6 +75,7 @@ def apply():
     from BTrees.IIBTree  import IISet
     from BTrees import IIBTree
     patch_intersection(IIBTree, IISet)
+    patch_weightedIntersection(IIBTree, IISet)
     patch_difference(IIBTree, IISet)
 
     from BTrees.IOBTree  import IOSet
@@ -74,6 +86,7 @@ def apply():
     from BTrees.OIBTree  import OISet
     from BTrees import OIBTree
     patch_intersection(OIBTree, OISet)
+    patch_weightedIntersection(OIBTree, OISet)
     patch_difference(OIBTree, OISet)
 
     from BTrees.OOBTree  import OOSet

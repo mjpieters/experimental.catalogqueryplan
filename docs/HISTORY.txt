@@ -3,6 +3,10 @@ Changelog
 
 1.0 - unreleased
 ----------------
+
+* Add alternative weightedIntersection, and reuse BTree tests
+  [tesdal]
+
 * Don't monkeypatch intersection as zc.relationship will try
   to pickle the function.
   Added new ExtendedPathIndex code.

@@ -1,8 +1,24 @@
 import unittest
 
-from BTrees.IIBTree import intersection2 as intersection
-from BTrees.IIBTree import difference2 as difference
-from BTrees.IIBTree import IISet, IITreeSet, IIBTree
+from BTrees.IIBTree import intersection2 as iiintersection
+from BTrees.IIBTree import weightedIntersection2 as iiweightedIntersection
+from BTrees.IIBTree import difference2 as iidifference
+from BTrees.IIBTree import IISet, IITreeSet, IIBTree, IIBucket
+
+from BTrees.IOBTree import intersection2 as iointersection
+from BTrees.IOBTree import difference2 as iodifference
+from BTrees.IOBTree import IOSet, IOTreeSet, IOBTree, IOBucket
+
+from BTrees.OIBTree import intersection2 as oiintersection
+from BTrees.OIBTree import weightedIntersection2 as oiweightedIntersection
+from BTrees.OIBTree import difference2 as oidifference
+from BTrees.OIBTree import OISet, OITreeSet, OIBTree, OIBucket
+
+from BTrees.OOBTree import intersection2 as oointersection
+from BTrees.OOBTree import difference2 as oodifference
+from BTrees.OOBTree import OOSet, OOTreeSet, OOBTree, OOBucket
+
+from BTrees.tests import testSetOps
 
 from Products.PluginIndexes.FieldIndex.tests import testFieldIndex
 class TestFieldIndex(testFieldIndex.FieldIndexTests):
@@ -24,180 +40,89 @@ class TestExtendedPathIndex(testExtendedPathIndex.TestExtendedPathIndex):
     pass
 
 
-class TestIntersection(unittest.TestCase):
-    def test_empty(self):
-        empty = IISet()
-        self.failUnlessEqual(intersection(None, None), None)
-        self.failUnlessEqual(list(intersection(empty, empty)), list(empty))
+class SetResult(testSetOps.SetResult):
+    def testNone(self):
+        for op in self.union, self.intersection, self.difference:
+            C = op(None, None)
+            self.assert_(C is None)
 
-        s1 = IISet([1])
-        s2 = IISet([2])
-        self.failUnlessEqual(list(intersection(s1, empty)), [])
-        self.failUnlessEqual(list(intersection(empty, s2)), [])
-        self.failUnlessEqual(list(intersection(s1, s2)), [])
-        self.failUnlessEqual(list(intersection(s2, s1)), [])
+        for op in self.union, self.intersection, self.difference:
+            for A in self.As:
+                C = op(A, None)
+                self.assert_(C is A)
 
-        ts1 = IITreeSet([1])
-        ts2 = IITreeSet([2])
-        self.failUnlessEqual(list(intersection(ts1, empty)), [])
-        self.failUnlessEqual(list(intersection(empty, ts2)), [])
-        self.failUnlessEqual(list(intersection(ts1, ts2)), [])
-        self.failUnlessEqual(list(intersection(ts2, ts1)), [])
+                C = op(None, A)
+                if op == self.difference:
+                    self.assert_(C is None)
+                else:
+                    self.assert_(C is A)
 
-        self.failUnlessEqual(list(intersection(ts1, s2)), [])
-        self.failUnlessEqual(list(intersection(s1, ts2)), [])
+class TestPureII(SetResult):
+    from BTrees.IIBTree import union
+    def intersection(self, o1, o2):
+        return iiintersection(o1, o2)
+    def difference(self, o1, o2):
+        return iidifference(o1, o2)
+    builders = IISet, IITreeSet, testSetOps.makeBuilder(IIBTree), testSetOps.makeBuilder(IIBucket)
 
-        bt1 = IIBTree({1:1})
-        bt2 = IIBTree({2:2})
-        self.failUnlessEqual(list(intersection(bt1, empty)), [])
-        self.failUnlessEqual(list(intersection(empty, bt2)), [])
-        self.failUnlessEqual(list(intersection(bt1, bt2)), [])
-        self.failUnlessEqual(list(intersection(bt2, bt1)), [])
+class TestPureIO(SetResult):
+    from BTrees.IOBTree import union
+    def intersection(self, o1, o2):
+        return iointersection(o1, o2)
+    def difference(self, o1, o2):
+        return iodifference(o1, o2)
+    builders = IOSet, IOTreeSet, testSetOps.makeBuilder(IOBTree), testSetOps.makeBuilder(IOBucket)
 
-        self.failUnlessEqual(list(intersection(bt1, s2)), [])
-        self.failUnlessEqual(list(intersection(s1, bt2)), [])
+class TestPureOO(SetResult):
+    from BTrees.OOBTree import union
+    def intersection(self, o1, o2):
+        return oointersection(o1, o2)
+    def difference(self, o1, o2):
+        return oodifference(o1, o2)
+    builders = OOSet, OOTreeSet, testSetOps.makeBuilder(OOBTree), testSetOps.makeBuilder(OOBucket)
 
-        self.failUnlessEqual(list(intersection(bt1, ts2)), [])
-        self.failUnlessEqual(list(intersection(ts1, bt2)), [])
-
-    def test_simple(self):
-        s1 = IISet([1,2,3,4])
-        s2 = IISet([3,4,5,6])
-        self.failUnlessEqual(list(intersection(s1, s2)), [3,4])
-        self.failUnlessEqual(list(intersection(s2, s1)), [3,4])
-
-        ts1 = IITreeSet([1,2,3,4])
-        ts2 = IITreeSet([3,4,5,6])
-        self.failUnlessEqual(list(intersection(ts1, ts2)), [3,4])
-        self.failUnlessEqual(list(intersection(ts2, ts1)), [3,4])
-
-        self.failUnlessEqual(list(intersection(s1, ts2)), [3,4])
-        self.failUnlessEqual(list(intersection(ts1, s2)), [3,4])
-
-        bt1 = IIBTree(dict.fromkeys([1,2,3,4], 0))
-        bt2 = IIBTree(dict.fromkeys([3,4,5,6], 0))
-        self.failUnlessEqual(list(intersection(bt1, bt2)), [3,4])
-        self.failUnlessEqual(list(intersection(bt2, bt1)), [3,4])
-
-        self.failUnlessEqual(list(intersection(ts1, bt2)), [3,4])
-        self.failUnlessEqual(list(intersection(bt1, ts2)), [3,4])
-
-        self.failUnlessEqual(list(intersection(s1, bt2)), [3,4])
-        self.failUnlessEqual(list(intersection(bt1, s2)), [3,4])
+class TestPureOI(SetResult):
+    from BTrees.OIBTree import union
+    def intersection(self, o1, o2):
+        return oiintersection(o1, o2)
+    def difference(self, o1, o2):
+        return oidifference(o1, o2)
+    builders = OISet, OITreeSet, testSetOps.makeBuilder(OIBTree), testSetOps.makeBuilder(OIBucket)
 
 
-    def test_largesmall(self):
-        s1 = IISet([5000])
-        s2 = IISet(range(0,10000))
-        self.failUnlessEqual(list(intersection(s1, s2)), [5000])
-        self.failUnlessEqual(list(intersection(s2, s1)), [5000])
-
-        ts1 = IITreeSet([5000])
-        ts2 = IITreeSet(range(0,10000))
-        self.failUnlessEqual(list(intersection(ts1, ts2)), [5000])
-        self.failUnlessEqual(list(intersection(ts2, ts1)), [5000])
-
-        self.failUnlessEqual(list(intersection(s1, ts2)), [5000])
-        self.failUnlessEqual(list(intersection(ts1, s2)), [5000])
-
-        bt1 = IIBTree({5000:5000})
-        bt2 = IIBTree(dict.fromkeys(range(0,10000), 0))
-        self.failUnlessEqual(list(intersection(bt1, bt2)), [5000])
-        self.failUnlessEqual(list(intersection(bt2, bt1)), [5000])
-
-        self.failUnlessEqual(list(intersection(ts1, bt2)), [5000])
-        self.failUnlessEqual(list(intersection(bt1, ts2)), [5000])
-
-        self.failUnlessEqual(list(intersection(s1, bt2)), [5000])
-        self.failUnlessEqual(list(intersection(bt1, s2)), [5000])
+class TestWeightedII(testSetOps.Weighted):
+    def intersection(self, o1, o2):
+        return iiintersection(o1, o2)
+    def weightedIntersection(self, o1, o2, w1=1, w2=1):
+        return iiweightedIntersection(o1, o2, w1, w2)
+    from BTrees.IIBTree import weightedUnion, union
+    from BTrees.IIBTree import IIBucket as mkbucket
+    builders = IIBucket, IIBTree, testSetOps.itemsToSet(IISet), testSetOps.itemsToSet(IITreeSet)
 
 
-class TestDifference(unittest.TestCase):
-    def test_empty(self):
-        self.failUnlessEqual(difference(None, None), None)
-        empty = IISet()
-        self.failUnlessEqual(difference(None, empty), None)
-        self.failUnlessEqual(list(difference(empty, None)), list(empty))
-        self.failUnlessEqual(list(difference(empty, empty)), list(empty))
-
-        s1 = IISet([1])
-        self.failUnlessEqual(list(difference(empty, s1)), [])
-
-        ts1 = IITreeSet([1])
-        self.failUnlessEqual(list(difference(empty, ts1)), [])
-
-        bt1 = IIBTree(dict.fromkeys([1],0))
-        self.failUnlessEqual(list(difference(empty, bt1)), [])
-
-    def test_single(self):
-        empty = IISet()
-        s1 = IISet([1])
-        s2 = IISet([2])
-        self.failUnlessEqual(list(difference(s1, empty)), [1])
-        self.failUnlessEqual(list(difference(s1, s2)), [1])
-        self.failUnlessEqual(list(difference(s2, s1)), [2])
-
-        ts1 = IITreeSet([1])
-        ts2 = IITreeSet([2])
-        self.failUnlessEqual(list(difference(ts1, empty)), [1])
-        self.failUnlessEqual(list(difference(ts1, ts2)), [1])
-        self.failUnlessEqual(list(difference(ts2, ts1)), [2])
-
-        bt1 = IIBTree(dict.fromkeys([1],0))
-        bt2 = IIBTree(dict.fromkeys([2],0))
-        self.failUnlessEqual(list(difference(bt1, empty)), [1])
-        self.failUnlessEqual(list(difference(bt1, bt2)), [1])
-        self.failUnlessEqual(list(difference(bt2, bt1)), [2])
-
-    def test_simple(self):
-        empty = IISet()
-        s1 = IISet([1,2,3,4])
-        s2 = IISet([3,4,5,6])
-        self.failUnlessEqual(list(difference(s1, empty)), [1,2,3,4])
-        self.failUnlessEqual(list(difference(s1, s2)), [1,2])
-        self.failUnlessEqual(list(difference(s2, s1)), [5,6])
-
-        ts1 = IITreeSet([1,2,3,4])
-        ts2 = IITreeSet([3,4,5,6])
-        self.failUnlessEqual(list(difference(ts1, empty)), [1,2,3,4])
-        self.failUnlessEqual(list(difference(ts1, ts2)), [1,2])
-        self.failUnlessEqual(list(difference(ts2, ts1)), [5,6])
-
-        bt1 = IIBTree(dict.fromkeys([1,2,3,4],0))
-        bt2 = IIBTree(dict.fromkeys([3,4,5,6],0))
-        self.failUnlessEqual(list(difference(bt1, empty)), [1,2,3,4])
-        self.failUnlessEqual(list(difference(bt1, bt2)), [1,2])
-        self.failUnlessEqual(list(difference(bt2, bt1)), [5,6])
-
-    def test_largesmall(self):
-        empty = IISet()
-        s1 = IISet([5000])
-        s2 = IISet(range(0,10000))
-        self.failUnlessEqual(list(difference(s1, empty)), list(s1))
-        self.failUnlessEqual(list(difference(s1, s2)), [])
-        self.failUnlessEqual(list(difference(s2, s1)), [x for x in s2 if x != 5000])
-
-        ts1 = IITreeSet([5000])
-        ts2 = IITreeSet(range(0,10000))
-        self.failUnlessEqual(list(difference(ts1, empty)), list(s1))
-        self.failUnlessEqual(list(difference(ts1, ts2)), [])
-        self.failUnlessEqual(list(difference(ts2, ts1)), [x for x in s2 if x != 5000])
-
-        bt1 = IIBTree(dict.fromkeys([5000],0))
-        bt2 = IIBTree(dict.fromkeys(range(0,10000),0))
-        self.failUnlessEqual(list(difference(bt1, empty)), list(s1))
-        self.failUnlessEqual(list(difference(bt1, bt2)), [])
-        self.failUnlessEqual(list(difference(bt2, bt1)), [x for x in s2 if x != 5000])
+class TestWeightedOI(testSetOps.Weighted):
+    def intersection(self, o1, o2):
+        return oiintersection(o1, o2)
+    def weightedIntersection(self, o1, o2, w1=1, w2=1):
+        return oiweightedIntersection(o1, o2, w1, w2)
+    from BTrees.OIBTree import weightedUnion, union
+    from BTrees.OIBTree import union
+    from BTrees.OIBTree import OIBucket as mkbucket
+    builders = OIBucket, OIBTree, testSetOps.itemsToSet(OISet), testSetOps.itemsToSet(OITreeSet)
 
 
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
-    suite.addTest(makeSuite(TestIntersection))
-    suite.addTest(makeSuite(TestDifference))
     suite.addTest(makeSuite(TestFieldIndex))
     suite.addTest(makeSuite(TestKeywordIndex))
     suite.addTest(makeSuite(TestDateIndex))
     suite.addTest(makeSuite(TestPathIndex))
     suite.addTest(makeSuite(TestExtendedPathIndex))
+    suite.addTest(makeSuite(TestPureII))
+    suite.addTest(makeSuite(TestPureIO))
+    suite.addTest(makeSuite(TestPureOO))
+    suite.addTest(makeSuite(TestPureOI))
+    suite.addTest(makeSuite(TestWeightedII))
+    suite.addTest(makeSuite(TestWeightedOI))
     return suite
