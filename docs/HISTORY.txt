@@ -4,6 +4,9 @@ Changelog
 1.0 - unreleased
 ----------------
 
+* Removed redundant intersections, added type checking to difference
+  [tesdal]
+
 * Add alternative weightedIntersection, and reuse BTree tests
   [tesdal]
 

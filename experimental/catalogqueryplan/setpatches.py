@@ -56,7 +56,8 @@ def patch_difference(treetype, settype):
             return setdifference(o1, o2)
         # Both are real sets, of unknown size
         l1 = len(o1)
-        if l1 < SMALLSETSIZE:
+        # Difference returns bucket if o1 is btree
+        if l1 < SMALLSETSIZE and isinstance(o1, settype):
             l2 = len(o2)
             if l2/l1 > BIGSMALLRATIO:
                 new = settype()
@@ -72,10 +73,10 @@ def patch_difference(treetype, settype):
 
 
 def apply():
-    from BTrees.IIBTree  import IISet
+    from BTrees.IIBTree  import IISet, IITreeSet
     from BTrees import IIBTree
     patch_intersection(IIBTree, IISet)
-    patch_weightedIntersection(IIBTree, IISet)
+    patch_weightedIntersection(IIBTree, (IISet, IITreeSet))
     patch_difference(IIBTree, IISet)
 
     from BTrees.IOBTree  import IOSet
@@ -83,10 +84,10 @@ def apply():
     patch_intersection(IOBTree, IOSet)
     patch_difference(IOBTree, IOSet)
 
-    from BTrees.OIBTree  import OISet
+    from BTrees.OIBTree  import OISet, OITreeSet
     from BTrees import OIBTree
     patch_intersection(OIBTree, OISet)
-    patch_weightedIntersection(OIBTree, OISet)
+    patch_weightedIntersection(OIBTree, (OISet, OITreeSet))
     patch_difference(OIBTree, OISet)
 
     from BTrees.OOBTree  import OOSet
