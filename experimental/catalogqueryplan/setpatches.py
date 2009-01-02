@@ -32,18 +32,23 @@ def patch_intersection(treetype, settype):
             return new
         return setintersection(o1, o2)
 
-    treetype.intersection2 = intersection
+    if not hasattr(treetype, '_old_intersection'):
+        treetype._old_intersection = treetype.intersection
+        treetype.intersection = intersection
 
 
 def patch_weightedIntersection(treetype, settype):
-    setintersection = treetype.intersection2
+    setintersection = treetype.intersection
     weightedsetintersection = treetype.weightedIntersection
 
     def weightedIntersection(o1, o2, w1=1, w2=1):
         if isinstance(o1, settype) and isinstance(o2, settype):
             return (w1+w2), setintersection(o1, o2)
         return weightedsetintersection(o1, o2, w1, w2)
-    treetype.weightedIntersection2 = weightedIntersection
+
+    if not hasattr(treetype, '_old_weightedIntersection'):
+        treetype._old_weightedIntersection = treetype.weightedIntersection
+        treetype.weightedIntersection = weightedIntersection
 
 
 def patch_difference(treetype, settype):
@@ -69,7 +74,9 @@ def patch_difference(treetype, settype):
 
         return setdifference(o1, o2)
 
-    treetype.difference2 = difference
+    if not hasattr(treetype, '_old_difference'):
+        treetype._old_difference = treetype.difference
+        treetype.difference = difference
 
 
 def apply():
@@ -94,3 +101,26 @@ def apply():
     from BTrees import OOBTree
     patch_intersection(OOBTree, OOSet)
     patch_difference(OOBTree, OOSet)
+
+
+def unpatch(treetype):
+    treetype.intersection = treetype._old_intersection
+    del treetype._old_intersection
+    treetype.difference = treetype._old_difference
+    del treetype._old_difference
+    if hasattr(treetype, 'weightedIntersection'):
+        treetype.weightedIntersection = treetype._old_weightedIntersection
+        del treetype._old_weightedIntersection
+
+def unapply():
+    from BTrees import IIBTree
+    unpatch(IIBTree)
+
+    from BTrees import IOBTree
+    unpatch(IOBTree)
+
+    from BTrees import OIBTree
+    unpatch(OIBTree)
+
+    from BTrees import OOBTree
+    unpatch(OOBTree)

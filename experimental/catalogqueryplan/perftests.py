@@ -1,9 +1,18 @@
 from time import time
 import unittest
 
-from BTrees.IIBTree import intersection, intersection2
-from BTrees.IIBTree import difference, difference2
+import setpatches
+setpatches.apply()
+from BTrees.IIBTree import intersection as intersection2
+from BTrees.IIBTree import difference as difference2
+
+setpatches.unapply()
+
+from BTrees.IIBTree import intersection
+from BTrees.IIBTree import difference
+
 from BTrees.IIBTree import IISet, IITreeSet, IIBTree
+
 
 SMALLSETSIZE = 30
 BIGSETSIZE = 1000000

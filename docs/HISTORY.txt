@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.1 - unreleased
+1.1 - 2009-01-02
 ----------------
+
+* Made the set monkeypatches temporary to avoid zc.relationship
+  trying to persist the set methods.
+  [tesdal]
 
 1.0 - 2009-01-02
 ----------------

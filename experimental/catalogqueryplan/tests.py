@@ -1,21 +1,24 @@
 import unittest
 
-from BTrees.IIBTree import intersection2 as iiintersection
-from BTrees.IIBTree import weightedIntersection2 as iiweightedIntersection
-from BTrees.IIBTree import difference2 as iidifference
+import setpatches
+setpatches.apply()
+
+from BTrees.IIBTree import intersection as iiintersection
+from BTrees.IIBTree import weightedIntersection as iiweightedIntersection
+from BTrees.IIBTree import difference as iidifference
 from BTrees.IIBTree import IISet, IITreeSet, IIBTree, IIBucket
 
-from BTrees.IOBTree import intersection2 as iointersection
-from BTrees.IOBTree import difference2 as iodifference
+from BTrees.IOBTree import intersection as iointersection
+from BTrees.IOBTree import difference as iodifference
 from BTrees.IOBTree import IOSet, IOTreeSet, IOBTree, IOBucket
 
-from BTrees.OIBTree import intersection2 as oiintersection
-from BTrees.OIBTree import weightedIntersection2 as oiweightedIntersection
-from BTrees.OIBTree import difference2 as oidifference
+from BTrees.OIBTree import intersection as oiintersection
+from BTrees.OIBTree import weightedIntersection as oiweightedIntersection
+from BTrees.OIBTree import difference as oidifference
 from BTrees.OIBTree import OISet, OITreeSet, OIBTree, OIBucket
 
-from BTrees.OOBTree import intersection2 as oointersection
-from BTrees.OOBTree import difference2 as oodifference
+from BTrees.OOBTree import intersection as oointersection
+from BTrees.OOBTree import difference as oodifference
 from BTrees.OOBTree import OOSet, OOTreeSet, OOBTree, OOBucket
 
 from BTrees.tests import testSetOps
