@@ -4,6 +4,9 @@ Changelog
 1.2 - unreleased
 ----------------
 
+* Only sort intersection sets if there are more than 2 sets,
+  otherwise the order is irrelevant
+  [tesdal]
 
 1.1 - 2009-01-02
 ----------------

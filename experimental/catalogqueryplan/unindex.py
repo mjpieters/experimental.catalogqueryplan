@@ -61,7 +61,10 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
                 if isinstance(s, int):
                     s = IISet((s,))
                 tmp.append(s)
-            setlist = sorted(tmp, key=len)
+            if len(tmp) > 2:
+                setlist = sorted(tmp, key=len)
+            else:
+                setlist = tmp
             r = res
             for s in setlist:
                 r = intersection(r, s)
@@ -91,7 +94,8 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
             r = multiunion(setlist)
         else:
             # For intersection, sort with smallest data set first
-            setlist = sorted(setlist, key=len)
+            if len(setlist) > 2:
+                setlist = sorted(setlist, key=len)
             r = res
             for s in setlist:
                 r = intersection(r, s)
