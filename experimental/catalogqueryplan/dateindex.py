@@ -3,6 +3,9 @@ from BTrees.IIBTree import intersection
 from Products.PluginIndexes.common.util import parseIndexRequest
 from BTrees.IIBTree import IISet
 
+from logging import getLogger
+
+logger = getLogger('experimental.catalogqueryplan')
 
 def dateindex_apply_index( self, request, cid='', type=type, res=None):
     record = parseIndexRequest( request, self.id, self.query_options )
@@ -89,3 +92,4 @@ def patch_dateindex():
 
     from catalog import ADVANCEDTYPES
     ADVANCEDTYPES.append(DateIndex)
+    logger.info('Patched DateIndex._apply_index')

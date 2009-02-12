@@ -10,6 +10,10 @@ try:
 except ImportError:
     pass
 
+from logging import getLogger
+
+logger = getLogger('experimental.catalogqueryplan')
+
 
 def lang_tag(main, sub):
     return '-'.join(filter(None, (main, sub)))
@@ -113,7 +117,9 @@ def patch_languageindex():
     try:
         from Products.LinguaPlone.LanguageIndex import LanguageIndex
         LanguageIndex._apply_index = languageindex_apply_index
+        logger.info('Patched LanguageIndex._apply_index')
         LanguageIndex._search = languageindex_search
+        logger.info('Patched LanguageIndex.search')
 
         from catalog import ADVANCEDTYPES
         ADVANCEDTYPES.append(LanguageIndex)

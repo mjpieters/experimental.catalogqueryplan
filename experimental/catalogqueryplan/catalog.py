@@ -2,6 +2,10 @@ from BTrees.IIBTree import weightedIntersection
 
 from Products.ZCatalog.Lazy import LazyMap, LazyCat
 
+from logging import getLogger
+
+logger = getLogger('experimental.catalogqueryplan')
+
 ADVANCEDTYPES = []
 
 def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
@@ -125,3 +129,4 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
 def patch_catalog():
     from Products.ZCatalog.Catalog import Catalog
     Catalog.search = search
+    logger.info('Patched Catalog.search')

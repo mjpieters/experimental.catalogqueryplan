@@ -3,6 +3,10 @@ from BTrees.IIBTree import intersection
 from Products.PluginIndexes.common.util import parseIndexRequest
 from BTrees.IIBTree import IISet
 
+from logging import getLogger
+
+logger = getLogger('experimental.catalogqueryplan')
+
 def extendedpathindex_apply_index(self, request, res=None):
     """ hook for (Z)Catalog
         'request' --  mapping type (usually {"path": "..." }
@@ -193,7 +197,9 @@ def patch_extendedpathindex():
     try:
         from Products.ExtendedPathIndex.ExtendedPathIndex import ExtendedPathIndex
         ExtendedPathIndex._apply_index = extendedpathindex_apply_index
+        logger.info('Patched ExtendedPathIndex._apply_index')
         ExtendedPathIndex.search = extendedpathindex_search
+        logger.info('Patched ExtendedPathIndex.search')
 
         from catalog import ADVANCEDTYPES
         ADVANCEDTYPES.append(ExtendedPathIndex)

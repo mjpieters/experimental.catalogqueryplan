@@ -4,6 +4,9 @@ from BTrees.IIBTree import intersection
 from Products.PluginIndexes.common.util import parseIndexRequest
 from BTrees.IIBTree import IISet
 
+from logging import getLogger
+
+logger = getLogger('experimental.catalogqueryplan')
 
 def unindex_apply_index(self, request, cid='', type=type, res=None):
     record = parseIndexRequest(request, self.id, self.query_options)
@@ -109,6 +112,7 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
 def patch_unindex():
     from Products.PluginIndexes.common.UnIndex import UnIndex
     UnIndex._apply_index = unindex_apply_index
+    logger.info('Patched UnIndex._apply_index')
 
     from catalog import ADVANCEDTYPES
     from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex

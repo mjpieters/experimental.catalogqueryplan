@@ -2,6 +2,9 @@ from BTrees.IIBTree import multiunion
 from BTrees.IIBTree import intersection
 from Products.PluginIndexes.common.util import parseIndexRequest
 
+from logging import getLogger
+
+logger = getLogger('experimental.catalogqueryplan')
 
 def daterangeindex_apply_index( self, request, cid='', res=None):
     record = parseIndexRequest( request, self.getId() )
@@ -49,3 +52,4 @@ def patch_daterangeindex():
 
     from catalog import ADVANCEDTYPES
     ADVANCEDTYPES.append(DateRangeIndex)
+    logger.info('Patched DateRangeIndex._apply_index')

@@ -8,6 +8,9 @@ Changelog
   otherwise the order is irrelevant
   [tesdal]
 
+* Added logging for patches
+  [swampmonkey]
+
 1.1 - 2009-01-02
 ----------------
 

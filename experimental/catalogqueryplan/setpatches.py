@@ -1,5 +1,10 @@
+from logging import getLogger
+
+logger = getLogger('experimental.catalogqueryplan')
+
 SMALLSETSIZE = 200
 BIGSMALLRATIO = 20
+
 def patch_intersection(treetype, settype):
 
     setintersection = treetype.intersection
@@ -35,6 +40,7 @@ def patch_intersection(treetype, settype):
     if not hasattr(treetype, '_old_intersection'):
         treetype._old_intersection = treetype.intersection
         treetype.intersection = intersection
+        logger.info('Patched %s' % str(treetype.intersection))
 
 
 def patch_weightedIntersection(treetype, settype):
@@ -49,6 +55,7 @@ def patch_weightedIntersection(treetype, settype):
     if not hasattr(treetype, '_old_weightedIntersection'):
         treetype._old_weightedIntersection = treetype.weightedIntersection
         treetype.weightedIntersection = weightedIntersection
+        logger.info('Patched %s' % str(treetype.weightedIntersection))
 
 
 def patch_difference(treetype, settype):
@@ -77,6 +84,7 @@ def patch_difference(treetype, settype):
     if not hasattr(treetype, '_old_difference'):
         treetype._old_difference = treetype.difference
         treetype.difference = difference
+        logger.info('Patched %s' % str(treetype.difference))
 
 
 def apply():
@@ -106,11 +114,14 @@ def apply():
 def unpatch(treetype):
     treetype.intersection = treetype._old_intersection
     del treetype._old_intersection
+    logger.info('Removing patch from %s' % str(treetype.intersection))
     treetype.difference = treetype._old_difference
     del treetype._old_difference
+    logger.info('Removing patch from %s' % str(treetype.difference))
     if hasattr(treetype, 'weightedIntersection'):
         treetype.weightedIntersection = treetype._old_weightedIntersection
         del treetype._old_weightedIntersection
+        logger.info('Removing patch from %s' % str(treetype.weightedIntersection))
 
 def unapply():
     from BTrees import IIBTree
