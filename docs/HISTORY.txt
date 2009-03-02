@@ -4,6 +4,9 @@ Changelog
 1.2 - unreleased
 ----------------
 
+* Make sure UnIndex always returns IISet, not int.
+  [tesdal]
+
 * Only sort intersection sets if there are more than 2 sets,
   otherwise the order is irrelevant
   [tesdal]

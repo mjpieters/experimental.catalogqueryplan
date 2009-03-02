@@ -53,7 +53,10 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
 
         # If we only use 1 key (default setting), intersect and return immediately
         if len(setlist) == 1:
-            return setlist[0], (self.id,)
+            result = setlist[0]
+            if isinstance(result, int):
+                result = IISet((result,))
+            return result, (self.id,)
 
         if operator == 'or':
             r = multiunion(setlist)
@@ -91,7 +94,10 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
 
         # If we only use 1 key (default setting), intersect and return immediately
         if len(setlist) == 1:
-            return setlist[0], (self.id,)
+            result = setlist[0]
+            if isinstance(result, int):
+                result = IISet((result,))
+            return result, (self.id,)
 
         if operator == 'or':
             r = multiunion(setlist)
