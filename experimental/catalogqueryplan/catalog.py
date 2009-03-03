@@ -24,7 +24,8 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     else:
         keydict = {}
         keydict.update(request.keywords)
-        keydict.update(request.request)
+        if isinstance(request.request, dict):
+            keydict.update(request.request)
     key = tuple(sorted(keydict.keys()))
     indexes = prioritymap.get(key, [])
     if not indexes:

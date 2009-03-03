@@ -4,6 +4,10 @@ Changelog
 1.2 - unreleased
 ----------------
 
+* Don't use request.request as part of the update as it tends to
+  trigger the browser id (_ZopeId)
+  [tesdal]
+
 * Make sure UnIndex always returns IISet, not int.
   [tesdal]
 
