@@ -1,7 +1,10 @@
 Changelog
 =========
 
-1.2 - unreleased
+1.3 - Unreleased
+----------------
+
+1.2 - 2009-03-03
 ----------------
 
 * Don't use request.request as part of the update as it tends to
