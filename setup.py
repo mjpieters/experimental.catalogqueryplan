@@ -11,7 +11,6 @@ setup(name='experimental.catalogqueryplan',
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
-        "Topic :: Software Development :: Libraries :: Python Modules",
         ],
       keywords='plone catalog search',
       author='Jarn AS',

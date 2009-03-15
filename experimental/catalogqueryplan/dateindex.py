@@ -92,4 +92,4 @@ def patch_dateindex():
 
     from catalog import ADVANCEDTYPES
     ADVANCEDTYPES.append(DateIndex)
-    logger.info('Patched DateIndex._apply_index')
+    logger.debug('Patched DateIndex._apply_index')

@@ -118,7 +118,7 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
 def patch_unindex():
     from Products.PluginIndexes.common.UnIndex import UnIndex
     UnIndex._apply_index = unindex_apply_index
-    logger.info('Patched UnIndex._apply_index')
+    logger.debug('Patched UnIndex._apply_index')
 
     from catalog import ADVANCEDTYPES
     from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex

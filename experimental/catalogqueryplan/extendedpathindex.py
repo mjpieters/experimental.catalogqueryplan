@@ -197,9 +197,9 @@ def patch_extendedpathindex():
     try:
         from Products.ExtendedPathIndex.ExtendedPathIndex import ExtendedPathIndex
         ExtendedPathIndex._apply_index = extendedpathindex_apply_index
-        logger.info('Patched ExtendedPathIndex._apply_index')
+        logger.debug('Patched ExtendedPathIndex._apply_index')
         ExtendedPathIndex.search = extendedpathindex_search
-        logger.info('Patched ExtendedPathIndex.search')
+        logger.debug('Patched ExtendedPathIndex.search')
 
         from catalog import ADVANCEDTYPES
         ADVANCEDTYPES.append(ExtendedPathIndex)

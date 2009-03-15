@@ -1,8 +1,11 @@
 Changelog
 =========
 
-1.3 - Unreleased
+1.3 - 2009-03-15
 ----------------
+
+* Changed the log messages to debug level.
+  [hannosch]
 
 1.2 - 2009-03-03
 ----------------
