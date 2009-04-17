@@ -6,7 +6,24 @@ from logging import getLogger
 
 logger = getLogger('experimental.catalogqueryplan')
 
+MAX_DISTINCT_VALUES = 20
+
 ADVANCEDTYPES = []
+VALUETYPES = []
+
+def determine_value_indexes(catalog):
+    # This function determines all indexes whose values should be respected
+    # in the prioritymap key. A index type needs to be registered in the
+    # VALUETYPES module global and the number of unique values needs to be
+    # lower than the MAX_DISTINCT_VALUES watermark.
+    valueindexes = []
+    for name, index in catalog.indexes.items():
+        if type(index) in VALUETYPES:
+            if len(index) < MAX_DISTINCT_VALUES:
+                # Checking for len of an index should be fast. It's a stored
+                # BTrees.Length value and requires no calculation.
+                valueindexes.append(name)
+    return frozenset(valueindexes)
 
 def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     advancedtypes = tuple(ADVANCEDTYPES)
@@ -18,7 +35,11 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     prioritymap = getattr(self, '_v_prioritymap', None)
     if prioritymap is None:
         prioritymap = self._v_prioritymap = {}
-    
+
+    valueindexes = getattr(self, '_v_valueindexes', None)
+    if valueindexes is None:
+        valueindexes = self._v_valueindexes = determine_value_indexes(self)
+
     if isinstance(request, dict):
         keydict = request.copy()
     else:
@@ -26,7 +47,18 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
         keydict.update(request.keywords)
         if isinstance(request.request, dict):
             keydict.update(request.request)
-    key = tuple(sorted(keydict.keys()))
+    key = keys = keydict.keys()
+    values = [name for name in keys if name in valueindexes]
+    if values:
+        # If we have indexes whose values should be considered, we first
+        # preserve all normal indexes and then add the keys whose values
+        # matter including their value into the key
+        key = [name for name in keys if name not in values]
+        for name in values:
+            # We need to make sure the key is immutable, repr() is an easy way
+            # to do this without imposing restrictions on the types of values
+            key.append((name, repr(keydict.get(name, ''))))
+    key = tuple(sorted(key))
     indexes = prioritymap.get(key, [])
     if not indexes:
         pri = []

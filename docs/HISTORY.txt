@@ -4,6 +4,12 @@ Changelog
 1.4 - unreleased
 ----------------
 
+* Added a mechanism to indicate the types of indexes, whose query values should
+  be taken into account when building the prioritymap. An opt-in mechanism via
+  VALUETYPES is provided much like ADVANCEDTYPES. Queries for example for
+  `review_state` differ depending on the query for `pending` and `published`
+  items, as those are usually very unevenly distributed.
+  [hannosch]
 
 1.3 - 2009-03-15
 ----------------

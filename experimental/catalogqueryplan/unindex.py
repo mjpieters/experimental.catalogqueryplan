@@ -120,8 +120,10 @@ def patch_unindex():
     UnIndex._apply_index = unindex_apply_index
     logger.debug('Patched UnIndex._apply_index')
 
-    from catalog import ADVANCEDTYPES
+    from catalog import ADVANCEDTYPES, VALUETYPES
     from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex
     ADVANCEDTYPES.append(FieldIndex)
+    VALUETYPES.append(FieldIndex)
     from Products.PluginIndexes.KeywordIndex.KeywordIndex import KeywordIndex
     ADVANCEDTYPES.append(KeywordIndex)
+    VALUETYPES.append(KeywordIndex)

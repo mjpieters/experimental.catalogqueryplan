@@ -34,10 +34,11 @@ looked up.
 
 To get different query plans for similar queries, you can provide additional
 bogus index names. They will be ignored by the catalog, but will become part of
-the key. This means that if you search for Documents in draft state for a
-worklist, you can have a different ordering than when searching for published
-Documents, as there are likely to be very few items in draft state, but many in
-published state.
+the key. For indexes that have only a small number of distinct values the
+query value will become part of the key as well. These type of indexes often
+have an uneven distribution of indexed keys to values. For example there might
+be very few `pending` documents in a site, but many `published` ones.
+
 
 Testing
 =======
