@@ -100,7 +100,16 @@ def unindex_apply_index(self, request, cid='', type=type, res=None):
             return result, (self.id,)
 
         if operator == 'or':
-            r = multiunion(setlist)
+            # If we already get a small result set passed in, intersecting
+            # the various indexes with it and doing the union later is faster
+            # than creating a multiunion first.
+            if res is not None and len(res) < 200:
+                smalllist = []
+                for s in setlist:
+                    smalllist.append(intersection(res, s))
+                r = multiunion(smalllist)
+            else:
+                r = multiunion(setlist)
         else:
             # For intersection, sort with smallest data set first
             if len(setlist) > 2:

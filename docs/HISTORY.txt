@@ -4,6 +4,13 @@ Changelog
 1.4 - unreleased
 ----------------
 
+* Speed up the common KeywordIndexes like `portal_type` and
+  `allowedRolesAndUsers`. Provided with a small passed in result set and an
+  or-query we intersect it with each set in the index and union them later.
+  Doing a straight multiunion on these types of indexes most often creates a
+  set close to the total catalog size.
+  [hannosch]
+
 * Added optional logging of slow queries, inspired by unimr.catalogqueryplan.
   [hannosch]
 
