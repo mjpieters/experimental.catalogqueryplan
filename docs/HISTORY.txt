@@ -4,6 +4,9 @@ Changelog
 1.4 - unreleased
 ----------------
 
+* Added optional logging of slow queries, inspired by unimr.catalogqueryplan.
+  [hannosch]
+
 * Added a mechanism to indicate the types of indexes, whose query values should
   be taken into account when building the prioritymap. An opt-in mechanism via
   VALUETYPES is provided much like ADVANCEDTYPES. Queries for example for

@@ -1,10 +1,13 @@
-from BTrees.IIBTree import weightedIntersection
+from logging import getLogger
+from time import time
 
+from BTrees.IIBTree import weightedIntersection
 from Products.ZCatalog.Lazy import LazyMap, LazyCat
 
-from logging import getLogger
+from experimental.catalogqueryplan.config import LOG_SLOW_QUERIES
+from experimental.catalogqueryplan.config import LONG_QUERY_TIME
 
-logger = getLogger('experimental.catalogqueryplan')
+logger = getLogger('catalogqueryplan')
 
 MAX_DISTINCT_VALUES = 20
 
@@ -60,6 +63,7 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
             key.append((name, repr(keydict.get(name, ''))))
     key = tuple(sorted(key))
     indexes = prioritymap.get(key, [])
+    start = time()
     if not indexes:
         pri = []
         for i in self.indexes.keys():
@@ -93,6 +97,10 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 if not r:
                     return LazyCat([])
                 w, rs = weightedIntersection(rs, r)
+
+    duration =  time() - start
+    if LOG_SLOW_QUERIES and duration >= LONG_QUERY_TIME:
+        logger.info('query: %3.2fms, priority: %s, key: %s' % (duration*1000, indexes, key))
 
     if rs is None:
         # None of the indexes found anything to do with the request
