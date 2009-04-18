@@ -11,6 +11,6 @@ else:
 # only report slow queries that took more than LONG_QUERY_TIME seconds to execute 
 long_query_time = os.environ.get('LONG_QUERY_TIME', None)
 if  long_query_time is None:
-    LONG_QUERY_TIME = 0.1
+    LONG_QUERY_TIME = 0.01
 else:
     LONG_QUERY_TIME = float(long_query_time.strip())
