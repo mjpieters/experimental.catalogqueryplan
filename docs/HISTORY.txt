@@ -4,6 +4,10 @@ Changelog
 1.4 - unreleased
 ----------------
 
+* Added detailed per index time logging to the slow query reporting. You get
+  the time spent per index in addition to the total now.
+  [hannosch]
+
 * Speed up the common KeywordIndexes like `portal_type` and
   `allowedRolesAndUsers`. Provided with a small passed in result set and an
   or-query we intersect it with each set in the index and union them later.

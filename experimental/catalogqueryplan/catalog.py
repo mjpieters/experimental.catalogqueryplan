@@ -64,6 +64,7 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     key = tuple(sorted(key))
     indexes = prioritymap.get(key, [])
     start = time()
+    index_times = {}
     if not indexes:
         pri = []
         for i in self.indexes.keys():
@@ -86,10 +87,12 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
             _apply_index = getattr(index, "_apply_index", None)
             if _apply_index is None:
                 continue
+            index_times[i] = time()
             if isinstance(index, advancedtypes):
                 r = _apply_index(request, res=rs)
             else:
                 r = _apply_index(request)
+            index_times[i] = time() - index_times[i]
 
             if r is not None:
                 # Short circuit if empty result
@@ -100,7 +103,13 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
 
     duration =  time() - start
     if LOG_SLOW_QUERIES and duration >= LONG_QUERY_TIME:
-        logger.info('query: %3.2fms, priority: %s, key: %s' % (duration*1000, indexes, key))
+        detailed_times = []
+        for i, t in index_times.items():
+            detailed_times.append("%s : %3.2fms" % (i, t*1000))
+        info = 'query: %3.2fms, priority: %s, key: %s' % (duration*1000, indexes, key)
+        if detailed_times:
+            info += ', detailed: %s' % (', '.join(detailed_times))
+        logger.info(info)
 
     if rs is None:
         # None of the indexes found anything to do with the request
