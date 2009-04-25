@@ -1,0 +1,137 @@
+General ideas
+=============
+
+Querytree
+---------
+
+Started by Helge on a branch. The idea is to represent the query and the
+actual operations it needs to do in an abstract way. Then build an optimized
+tree out of it according to some metrics.
+
+We might need to express the concept of different kind of strategies and the
+conditions in which they apply in some general way.
+
+Introspection of the query tree and the equivalent of SQL's explain query will
+be required at some stage. If the query plan gets persistent information, it
+might also be valuable to allow manual user contributed hints to the plan.
+
+Cost-based-optimizer
+--------------------
+
+Currently we only take into account the length of the indexes / value sets.
+Actual CPU or real time, memory usage, ZODB cache trashing might be
+interesting as well. This feeds into the metrics available to the query tree.
+
+We might want to consider calculating some more detailed metrics which are
+time-intense and shouldn't be done on each query run. This is basically the
+equivalent of SQL statistics. Updating those on a daily / nightly basis seems
+to be a common approach.
+
+Currently we use a number of hardcoded constants to determine certain changes
+in behavior. Some of those might rely on specific characteristics of the
+environment, for example disk I/O, available memory or general database access
+timings. These might be valuable to determine based on some benchmarks instead
+of hardcoded values and store them.
+
+Lifetime
+--------
+
+The queryplan is volatile and per process. After a restart it needs a while
+to build up again. Persisting it might be valuable. Once the plan is persisted,
+we need to update the queryplan after certain intervals, as the metrics used
+in it do not stay constant. If the plan is shared across multiple processes,
+writes on query execution become problematic.
+
+Reporting
+---------
+
+We have some basic logging of slow queries on the trunk now. Exposing this in
+the ZMI would be good. Reporting should ideally gather the data across all
+processes.
+
+We should also expose the `histogram` view implemented in the LanguageIndex on
+all indexes. Seeing the value distribution in an index is interesting at
+times - the existing `browse` view lists all actual data and is unusable for
+large indexes.
+
+If we get a real query tree an interactive way in the ZMI to `explain queries`
+and test and modify queries TTW would be useful.
+
+Sorting / Batching
+------------------
+
+Sorting and batching have huge potential for being optimized. Some SQL
+databases seem to be able to preserve the ordering found in the indexes
+throughout the query execution, relying on knowledge about the semantic meaning
+of the sorting in underlying data structures and thus avoiding a separate
+sorting step at the end. Especially for the "latest five items" case this is
+hugely important.
+
+Limit results
+-------------
+
+While the ZCatalog currently respects a sort_limit, it does not have an
+efficient way of signaling a general "at most three items in total" query or
+more importantly the one item "exists" or "not exists" queries.
+
+Mixed operators
+---------------
+
+Currently there's no direct support for NOT or mixed AND / OR queries, though
+AdvancedQuery implements some of these. Given a real query tree these should
+be easier to support.
+
+Better indexes
+--------------
+
+Andreas Gabriel from the German university in Marburg wrote and add-on called
+http://pypi.python.org/pypi/unimr.compositeindex.
+
+This is basically an implementation of a simple materialized view and allows to
+store the combined index result for multiple indexes. While this adds some
+overhead on write, it can speed up queries which contain multiple arguments by
+some large margin. This index transparently takes every query it can handle.
+
+The standard TopicIndex can take an variable number of full expressions instead
+of just index names and creates stored result sets for each of those. This
+allows to pre-calculate specific and slow queries while indexing. Currently
+these need to be asked for specifically by the query caller and are not
+transparent in use. Especially for queries of the type: sorted, latest five
+news items, the stored search approach is potentially good.
+
+Index vs. Metadata
+------------------
+
+For SQL indexes it is sometimes faster to ignore the indexes and do a
+"full-table" scan. The "full-table" in ZCatalog is basically the metadata
+records.
+
+This seems most applicable in queries that result in a large amount of
+results, where all the data records of the target query are loaded anyways.
+
+Probably this is not so much applicable, since the metadata is one big data
+structure and not partitioned in the ways SQL tables are. This would probably
+only apply to queries which return 50% or more of the entire catalog entries.
+
+Brains vs. real object
+----------------------
+
+If the underlying indexed objects become smaller in the future it would be
+interesting to see if directly indexing the (database name, oid) of the real
+objects and returning those would be worthwhile, skipping the whole brains
+step. With __parent__ pointers being tentatively added soon, there would be no
+need to traverse to these objects anymore, but simply loading them from the
+database becomes possible.
+
+If this would be applicable it would also be interesting to allow queries to
+the catalog for arguments for which no index exists at all. Those would be
+executed after limiting the result set via the indexes and directly accessing
+the real objects and comparing them to the remaining query arguments.
+
+This would change the catalog and creating indexes into a real optimization
+for slow queries and not a requirement for querying at all. While writing
+application code, the developer would not need to care about creating indexes
+nor metadata but simply construct queries. Once given real data creating
+indexes could be left to a different audience (yeah, to DB admins), adding
+indexes TTW in the catalog tool based on the reporting facilities and timing
+statistics all the above ideas generated.
