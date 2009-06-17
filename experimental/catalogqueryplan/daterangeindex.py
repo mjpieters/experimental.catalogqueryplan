@@ -6,20 +6,15 @@ from logging import getLogger
 
 logger = getLogger('experimental.catalogqueryplan')
 
-def daterangeindex_apply_index(self, args, cid='', res=None):
-    record = parseIndexRequest(args, self.getId())
+def daterangeindex_apply_index(self, request, cid='', res=None):
+    record = parseIndexRequest(request, self.getId())
     if record.keys is None:
         return None
 
-    try:
-        request = args.request
-    except:
-        request = args.get('request', None)
-    if request is not None:
+    REQUEST = getattr(self, 'REQUEST', None)
+    if REQUEST is not None:
         requestkey = '_daterangeindex_%s' % self.getId()
-        cached = request.get(requestkey, None)
-
-
+        cached = REQUEST.get(requestkey, None)
         if cached is not None:
             return cached, (self._since_field, self._until_field)
 
@@ -37,7 +32,7 @@ def daterangeindex_apply_index(self, args, cid='', res=None):
     until = multiunion(self._until.values(term))
 
     # Total result is bound by res
-    if request is None:
+    if REQUEST is None:
         until = intersection(res, until)
 
     since = multiunion(self._since.values(None, term))
@@ -46,8 +41,8 @@ def daterangeindex_apply_index(self, args, cid='', res=None):
 
     result = multiunion([bounded, until_only, since_only, self._always])
 
-    if request is not None:
-        request[requestkey] = result
+    if REQUEST is not None:
+        REQUEST.set(requestkey, result)
 
     return result, (self._since_field, self._until_field)
 
