@@ -74,10 +74,13 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 continue
             r = _apply_index(request)
 
+            result_len = 0
             if r is not None:
                 r, u = r
-                pri.append((isinstance(index, advancedtypes), len(r), i))
+                result_len = len(r)
                 w, rs = weightedIntersection(rs, r)
+            pri.append((isinstance(index, advancedtypes), result_len, i))
+
         pri.sort()
         prioritymap[key] = [p[-1] for p in pri]
 

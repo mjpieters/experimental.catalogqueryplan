@@ -4,6 +4,12 @@ Changelog
 1.5 - unreleased
 ----------------
 
+* Make sure to always include all indexes found in the original query into the
+  queryplan. Otherwise if we get a query at first which happens to have no
+  restrictions on a particular index, this index will no longer be queried at
+  all. Now we at least preserve the index as part of the queryplan. The real
+  solution is to continuously update the queryplan with result lengths as done
+  in unimr.catalogqueryplan. [hannosch]
 
 1.4 - 2009-05-20
 ----------------
