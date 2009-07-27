@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.5'
+version = '1.6'
 
 setup(name='experimental.catalogqueryplan',
       version=version,
@@ -24,4 +24,4 @@ setup(name='experimental.catalogqueryplan',
       install_requires=[
           'setuptools',
       ],
-      )
+)
