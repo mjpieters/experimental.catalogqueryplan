@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5 - unreleased
+1.5 - 2009-07-27
 ----------------
 
 * Make sure to always include all indexes found in the original query into the
