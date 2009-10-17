@@ -36,7 +36,7 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
 
     # Note that if the indexes find query arguments, but the end result
     # is an empty sequence, we do nothing
-    
+
     prioritymap = getattr(self, '_v_prioritymap', None)
     if prioritymap is None:
         if DEFAULT_PRIORITYMAP is not None:
@@ -142,16 +142,16 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
             # having a 'values' means we have a data structure with
             # scores.  Build a new result set, sort it by score, reverse
             # it, compute the normalized score, and Lazify it.
-                            
+
             if not merge:
-                # Don't bother to sort here, return a list of 
+                # Don't bother to sort here, return a list of
                 # three tuples to be passed later to mergeResults
                 # note that data_record_normalized_score_ cannot be
                 # calculated and will always be 1 in this case
                 getitem = self.__getitem__
-                return [(score, (1, score, rid), getitem) 
+                return [(score, (1, score, rid), getitem)
                         for rid, score in rs.items()]
-            
+
             rs = rs.byValue(0) # sort it by score
             max = float(rs[0][0])
 
@@ -170,7 +170,7 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 r.data_record_score_ = score
                 r.data_record_normalized_score_ = int(100. * score / max)
                 return r
-            
+
             return LazyMap(getScoredResult, rs, len(rs))
 
         elif sort_index is None and not hasattr(rs, 'values'):
