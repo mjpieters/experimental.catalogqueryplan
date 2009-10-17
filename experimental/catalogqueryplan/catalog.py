@@ -14,6 +14,8 @@ MAX_DISTINCT_VALUES = 20
 ADVANCEDTYPES = []
 VALUETYPES = []
 
+DEFAULT_PRIORITYMAP = None
+
 def determine_value_indexes(catalog):
     # This function determines all indexes whose values should be respected
     # in the prioritymap key. A index type needs to be registered in the
@@ -37,7 +39,15 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     
     prioritymap = getattr(self, '_v_prioritymap', None)
     if prioritymap is None:
-        prioritymap = self._v_prioritymap = {}
+        if DEFAULT_PRIORITYMAP is not None:
+            identifier = '/'.join(self.getPhysicalPath())
+            default = DEFAULT_PRIORITYMAP.get(identifier, None)
+            if default is not None:
+                prioritymap = self._v_prioritymap = default.copy()
+            else:
+                prioritymap = self._v_prioritymap = {}
+        else:
+            prioritymap = self._v_prioritymap = {}
 
     valueindexes = getattr(self, '_v_valueindexes', None)
     if valueindexes is None:

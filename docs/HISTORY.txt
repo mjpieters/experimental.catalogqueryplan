@@ -4,6 +4,10 @@ Changelog
 1.7 - unreleased
 ----------------
 
+* Added a `DEFAULT_PRIORITYMAP` hook into the catalog module. This allows to
+  provide a default priority map dictionary to initialize the prioritymap with
+  a precomputed or manually designed one.
+  [hannosch]
 
 1.6 - 2009-09-10
 ----------------
