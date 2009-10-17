@@ -78,6 +78,10 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     if not indexes:
         pri = []
         for i in self.indexes.keys():
+            if i not in keys:
+                # Do not ask indexes to restrict the result, which aren't part
+                # of the query
+                continue
             index = self.getIndex(i)
             _apply_index = getattr(index, "_apply_index", None)
             if _apply_index is None:
