@@ -53,13 +53,20 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     if valueindexes is None:
         valueindexes = self._v_valueindexes = determine_value_indexes(self)
 
+    # What follows is a bit of a mess, but the ZCatalog API supports passing
+    # in query restrictions in almost arbitary ways
     if isinstance(request, dict):
         keydict = request.copy()
     else:
         keydict = {}
         keydict.update(request.keywords)
-        if isinstance(request.request, dict):
-            keydict.update(request.request)
+        real_req = request.request
+        if isinstance(real_req, dict):
+            keydict.update(real_req)
+        if getattr(real_req, 'form', None) is not None:
+            if isinstance(real_req.form, dict):
+                keydict.update(real_req.form)
+
     key = keys = keydict.keys()
     values = [name for name in keys if name in valueindexes]
     if values:
@@ -71,10 +78,12 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
             # We need to make sure the key is immutable, repr() is an easy way
             # to do this without imposing restrictions on the types of values
             key.append((name, repr(keydict.get(name, ''))))
+
     key = tuple(sorted(key))
     indexes = prioritymap.get(key, [])
     start = time()
     index_times = {}
+
     if not indexes:
         pri = []
         for i in self.indexes.keys():

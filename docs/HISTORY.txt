@@ -4,6 +4,9 @@ Changelog
 1.8 - Unreleased
 ----------------
 
+* Fixed an optimization introduced in the 1.7 release. We also need to look
+  into the form arguments of a request to look for query restrictions.
+  [hannosch]
 
 1.7 - 2009-10-17
 ----------------
