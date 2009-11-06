@@ -4,6 +4,8 @@ Changelog
 1.9 - Unreleased
 ----------------
 
+* Yet more fixes for the recent optimization. The ZCatalog API is too flexible.
+  [hannosch]
 
 1.8 - 2009-11-06
 ----------------

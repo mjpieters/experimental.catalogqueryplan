@@ -16,6 +16,7 @@ VALUETYPES = []
 
 DEFAULT_PRIORITYMAP = None
 
+
 def determine_value_indexes(catalog):
     # This function determines all indexes whose values should be respected
     # in the prioritymap key. A index type needs to be registered in the
@@ -29,6 +30,7 @@ def determine_value_indexes(catalog):
                 # BTrees.Length value and requires no calculation.
                 valueindexes.append(name)
     return frozenset(valueindexes)
+
 
 def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     advancedtypes = tuple(ADVANCEDTYPES)
@@ -53,6 +55,8 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
     if valueindexes is None:
         valueindexes = self._v_valueindexes = determine_value_indexes(self)
 
+    existing_indexes = self.indexes.keys()
+
     # What follows is a bit of a mess, but the ZCatalog API supports passing
     # in query restrictions in almost arbitary ways
     if isinstance(request, dict):
@@ -63,9 +67,17 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
         real_req = request.request
         if isinstance(real_req, dict):
             keydict.update(real_req)
-        if getattr(real_req, 'form', None) is not None:
-            if isinstance(real_req.form, dict):
-                keydict.update(real_req.form)
+        known_keys = keydict.keys()
+        # The request has too many places where an index restriction might be
+        # specified. Putting all of request.form, request.other, ... into the
+        # key isn't what we want either, so we iterate over all known indexes
+        # instead and see if they are in the request.
+        for iid in existing_indexes:
+            if iid in known_keys:
+                continue
+            value = real_req.get(iid)
+            if value:
+                keydict[iid] = value
 
     key = keys = keydict.keys()
     values = [name for name in keys if name in valueindexes]
@@ -86,7 +98,7 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
 
     if not indexes:
         pri = []
-        for i in self.indexes.keys():
+        for i in existing_indexes:
             if i not in keys:
                 # Do not ask indexes to restrict the result, which aren't part
                 # of the query
