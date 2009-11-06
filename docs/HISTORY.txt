@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.8 - Unreleased
+1.8 - 2009-11-06
 ----------------
 
 * Fixed an optimization introduced in the 1.7 release. We also need to look
