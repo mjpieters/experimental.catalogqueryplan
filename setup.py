@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import os
 
 version = '2.0'
 
@@ -7,7 +6,7 @@ setup(name='experimental.catalogqueryplan',
       version=version,
       description="Static query optimized with one plan",
       long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+                       open("CHANGES.txt").read(),
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
