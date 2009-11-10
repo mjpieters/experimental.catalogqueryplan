@@ -1,4 +1,5 @@
 from logging import getLogger
+from threading import currentThread
 from time import time
 
 from BTrees.IIBTree import weightedIntersection
@@ -44,11 +45,15 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
         if DEFAULT_PRIORITYMAP is not None:
             identifier = '/'.join(self.getPhysicalPath())
             default = DEFAULT_PRIORITYMAP.get(identifier, None)
+            logger.info('initializing priority map from default (thread %s): %r',
+                currentThread().getName(), default)
             if default is not None:
                 prioritymap = self._v_prioritymap = default.copy()
             else:
                 prioritymap = self._v_prioritymap = {}
         else:
+            logger.info('initializing empty priority map (thread %s)',
+                currentThread().getName())
             prioritymap = self._v_prioritymap = {}
 
     valueindexes = getattr(self, '_v_valueindexes', None)
