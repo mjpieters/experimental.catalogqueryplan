@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0 - Unreleased
+2.0 - 2009-11-10
 ----------------
 
 * Add browser view for convenient dumping of the current query plan as a
