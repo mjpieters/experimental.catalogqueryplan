@@ -43,18 +43,18 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
 
     prioritymap = getattr(self, '_v_prioritymap', None)
     if prioritymap is None:
+        identifier = '/'.join(self.getPhysicalPath())
         if DEFAULT_PRIORITYMAP is not None:
-            identifier = '/'.join(self.getPhysicalPath())
             default = DEFAULT_PRIORITYMAP.get(identifier, None)
-            logger.info('initializing priority map from default (thread %s): %r',
-                currentThread().getName(), default)
+            logger.info('initializing priority map for %r from default (thread %s)',
+                identifier, currentThread().getName())
             if default is not None:
                 prioritymap = self._v_prioritymap = default.copy()
             else:
                 prioritymap = self._v_prioritymap = {}
         else:
-            logger.info('initializing empty priority map (thread %s)',
-                currentThread().getName())
+            logger.info('initializing empty priority map for %r (thread %s)',
+                identifier, currentThread().getName())
             prioritymap = self._v_prioritymap = {}
 
     valueindexes = getattr(self, '_v_valueindexes', None)
