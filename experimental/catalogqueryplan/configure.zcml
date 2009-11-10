@@ -1,8 +1,16 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="experimental.catalogqueryplan">
 
     <five:registerPackage package="." />
+
+    <browser:page
+        name="catalogqueryplan-prioritymap"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        class=".browser.Views"
+        attribute="prioritymap"
+        permission="cmf.ManagePortal" />
 
 </configure>
