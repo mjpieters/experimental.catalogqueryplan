@@ -7,6 +7,7 @@ from Products.ZCatalog.Lazy import LazyMap, LazyCat
 
 from experimental.catalogqueryplan.config import LOG_SLOW_QUERIES
 from experimental.catalogqueryplan.config import LONG_QUERY_TIME
+from experimental.catalogqueryplan.utils import loadPriorityMap
 
 logger = getLogger('catalogqueryplan')
 
@@ -15,7 +16,7 @@ MAX_DISTINCT_VALUES = 20
 ADVANCEDTYPES = []
 VALUETYPES = []
 
-DEFAULT_PRIORITYMAP = None
+DEFAULT_PRIORITYMAP = loadPriorityMap()
 
 
 def determine_value_indexes(catalog):

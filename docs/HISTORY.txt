@@ -4,7 +4,9 @@ Changelog
 2.0 - Unreleased
 ----------------
 
-* Add browser view for convenient dumping of the current query plan.
+* Add browser view for convenient dumping of the current query plan as a
+  python module & support for loading it again using the `CATALOGQUERYPLAN`
+  environment variable.
   [witsch]
 
 1.9 - 2009-11-06

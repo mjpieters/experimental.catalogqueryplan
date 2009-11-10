@@ -114,6 +114,27 @@ class TestWeightedOI(testSetOps.Weighted):
     builders = OIBucket, OIBTree, testSetOps.itemsToSet(OISet), testSetOps.itemsToSet(OITreeSet)
 
 
+class TestPriorityMap(unittest.TestCase):
+
+    test_map = { 'foo': ['bar'] }
+
+    def testDefaultPriorityMap(self):
+        from experimental.catalogqueryplan import catalog
+        self.assertEqual(catalog.DEFAULT_PRIORITYMAP, None)
+
+    def testLoadPriorityMap(self):
+        from experimental.catalogqueryplan.utils import loadPriorityMap
+        from os import environ
+        environ['CATALOGQUERYPLAN'] = __name__ + '.TestPriorityMap.test_map'
+        self.assertEqual(loadPriorityMap(), dict(foo=['bar']))
+
+    def testLoadBadPriorityMap(self):
+        from experimental.catalogqueryplan.utils import loadPriorityMap
+        from os import environ
+        environ['CATALOGQUERYPLAN'] = 'foo.bar'
+        self.assertEqual(loadPriorityMap(), None)
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
@@ -128,4 +149,5 @@ def test_suite():
     suite.addTest(makeSuite(TestPureOI))
     suite.addTest(makeSuite(TestWeightedII))
     suite.addTest(makeSuite(TestWeightedOI))
+    suite.addTest(makeSuite(TestPriorityMap))
     return suite
