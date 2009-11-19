@@ -4,6 +4,9 @@ Changelog
 2.1 - Unreleased
 ----------------
 
+* Moved patching into an initialize method and import ZopeTestCase in tests.
+  This avoids import errors in Zope 2.12.
+  [hannosch]
 
 2.0 - 2009-11-10
 ----------------

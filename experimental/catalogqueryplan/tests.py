@@ -1,4 +1,5 @@
 import unittest
+from Testing import ZopeTestCase
 
 import setpatches
 setpatches.apply()
