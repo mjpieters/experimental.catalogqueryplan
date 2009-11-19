@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1 - Unreleased
+2.1 - 2009-11-19
 ----------------
 
 * Moved patching into an initialize method and import ZopeTestCase in tests.
