@@ -15,9 +15,9 @@ Changelog
 2.0 - 2009-11-10
 ----------------
 
-* Add browser view for convenient dumping of the current query plan as a
-  python module & support for loading it again using the `CATALOGQUERYPLAN`
-  environment variable.
+* Add browser view named ``catalogqueryplan-prioritymap`` for convenient
+  dumping of the current query plan as a Python module & support for loading
+  it again using the `CATALOGQUERYPLAN` environment variable.
   [witsch]
 
 1.9 - 2009-11-06
