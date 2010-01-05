@@ -1,7 +1,7 @@
 import unittest
 from Testing import ZopeTestCase
 
-import setpatches
+from experimental.catalogqueryplan import setpatches
 setpatches.apply()
 
 from BTrees.IIBTree import intersection as iiintersection

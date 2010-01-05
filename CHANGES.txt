@@ -4,6 +4,8 @@ Changelog
 2.2 - Unreleased
 ----------------
 
+* Moved tests into a subpackage.
+  [hannosch]
 
 2.1 - 2009-11-19
 ----------------
