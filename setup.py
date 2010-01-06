@@ -1,6 +1,21 @@
-from setuptools import setup, find_packages
+from os.path import join
+from setuptools import setup, find_packages, Extension, Feature
 
-version = '2.2'
+version = '3.0'
+
+codeoptimization = Feature("Optional code optimizations",
+    standard=True,
+      ext_modules=[
+        Extension(
+          name='experimental.catalogqueryplan.difference',
+          sources=[join('experimental', 'catalogqueryplan', 'difference.c')]
+        ),
+        Extension(
+          name='experimental.catalogqueryplan.intersection',
+          sources=[join('experimental', 'catalogqueryplan', 'intersection.c')]
+        ),
+      ],
+)
 
 setup(name='experimental.catalogqueryplan',
       version=version,
@@ -20,6 +35,7 @@ setup(name='experimental.catalogqueryplan',
       namespace_packages=['experimental'],
       include_package_data=True,
       zip_safe=False,
+      features = {'codeoptimization': codeoptimization},
       install_requires=[
           'setuptools',
       ],

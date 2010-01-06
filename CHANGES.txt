@@ -1,8 +1,12 @@
 Changelog
 =========
 
-2.2 - Unreleased
+3.0 - Unreleased
 ----------------
+
+* Merged work from the querytree-cython branch. We have completely optional
+  C optimizations based on Cython now.
+  [hannosch]
 
 * Moved the performance tests to the normal tests package and made them
   available on test level 2.

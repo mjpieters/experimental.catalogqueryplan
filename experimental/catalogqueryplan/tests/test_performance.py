@@ -2,7 +2,7 @@ from time import time
 import unittest
 
 from experimental.catalogqueryplan import setpatches
-setpatches.apply()
+setpatches.apply(no_coptimizations=True)
 from BTrees.IIBTree import intersection as intersection2
 from BTrees.IIBTree import difference as difference2
 
@@ -13,6 +13,12 @@ from BTrees.IIBTree import difference
 
 from BTrees.IIBTree import IISet, IITreeSet, IIBTree
 
+try:
+    from experimental.catalogqueryplan.difference import ciidifference
+    from experimental.catalogqueryplan.intersection import ciiintersection
+except ImportError:
+    ciidifference = None
+    ciiintersection = None
 
 SMALLSETSIZE = 30
 BIGSETSIZE = 1000000
@@ -36,6 +42,7 @@ class TestIntersection(unittest.TestCase):
         new = 0.0
         old = 0.0
         new2 = 0.0
+        c = 0.0
         loop = LOOP
         for i in xrange(loop):
 
@@ -47,8 +54,15 @@ class TestIntersection(unittest.TestCase):
             res = intersection(small, large)
             old+=(time()-start)
 
+            if ciiintersection is not None:
+                start = time()
+                res = ciiintersection(small, large)
+                c+=(time()-start)
+
         print 'Old x%s: %.6f' % (loop, old)
         print 'New x%s: %.6f' % (loop, new)
+        if ciiintersection is not None:
+            print 'Cyt x%s: %.6f' % (loop, c)
 
     def test_None(self):
         bigsize = BIGSETSIZE
@@ -66,7 +80,6 @@ class TestIntersection(unittest.TestCase):
 
         print '\nIntersection empty set + large treeset'
         self.timing(small, large)
-
 
     def test_heavy_start(self):
         bigsize = BIGSETSIZE
@@ -148,6 +161,7 @@ class TestDifference(unittest.TestCase):
     def timing(self, small, large):
         new = 0.0
         old = 0.0
+        c = 0.0
         loop = LOOP
         for i in xrange(10):
             start = time()
@@ -158,8 +172,15 @@ class TestDifference(unittest.TestCase):
             res = difference2(small, large)
             new+=(time()-start)
 
+            if ciidifference is not None:
+                start = time()
+                res = ciidifference(small, large)
+                c+=(time()-start)
+
         print 'Old x%s: %.6f' % (loop, old)
         print 'New x%s: %.6f' % (loop, new)
+        if ciidifference is not None:
+            print 'Cyt x%s: %.6f' % (loop, c)
 
     def test_heavy_start(self):
         bigsize = BIGSETSIZE

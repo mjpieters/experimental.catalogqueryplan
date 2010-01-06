@@ -10,3 +10,12 @@ In order to run the tests of the package, just do::
 If you also want to run the performance tests run::
 
   ./bin/test -a 2
+
+Release
+=======
+
+In order to build a release, you need to regenerate the Cython based C code.
+To do so run:
+
+bin/cython experimental/catalogqueryplan/difference.pyx
+bin/cython experimental/catalogqueryplan/intersection.pyx

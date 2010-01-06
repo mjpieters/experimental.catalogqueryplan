@@ -5,6 +5,14 @@ logger = getLogger('experimental.catalogqueryplan')
 SMALLSETSIZE = 200
 BIGSMALLRATIO = 20
 
+HAS_COPTIMIZATIONS = True
+try:
+    from experimental.catalogqueryplan.difference import ciidifference
+    from experimental.catalogqueryplan.intersection import ciiintersection
+except ImportError:
+    HAS_COPTIMIZATIONS = False
+
+
 def patch_intersection(treetype, settype):
 
     setintersection = treetype.intersection
@@ -87,25 +95,48 @@ def patch_difference(treetype, settype):
         logger.debug('Patched %s' % str(treetype.difference))
 
 
-def apply():
-    from BTrees.IIBTree  import IISet, IITreeSet
-    from BTrees import IIBTree
-    patch_intersection(IIBTree, IISet)
-    patch_weightedIntersection(IIBTree, (IISet, IITreeSet))
-    patch_difference(IIBTree, IISet)
+def patch_cintersection(treetype, method):
+    if not hasattr(treetype, '_old_intersection'):
+        treetype._old_intersection = treetype.intersection
+        treetype.intersection = method
+        logger.debug('Patched %s' % str(treetype.intersection))
 
-    from BTrees.IOBTree  import IOSet
+
+def patch_cdifference(treetype, method):
+    if not hasattr(treetype, '_old_difference'):
+        treetype._old_difference = treetype.difference
+        treetype.difference = method
+        logger.debug('Patched %s' % str(treetype.difference))
+
+
+def apply(no_coptimizations=False):
+    global HAS_COPTIMIZATIONS
+    if no_coptimizations:
+        HAS_COPTIMIZATIONS = False
+
+    from BTrees.IIBTree import IISet, IITreeSet
+    from BTrees import IIBTree
+    patch_weightedIntersection(IIBTree, (IISet, IITreeSet))
+
+    if HAS_COPTIMIZATIONS:
+        patch_cdifference(IIBTree, ciidifference)
+        patch_cintersection(IIBTree, ciiintersection)
+    else:
+        patch_intersection(IIBTree, IISet)
+        patch_difference(IIBTree, IISet)
+
+    from BTrees.IOBTree import IOSet
     from BTrees import IOBTree
     patch_intersection(IOBTree, IOSet)
     patch_difference(IOBTree, IOSet)
 
-    from BTrees.OIBTree  import OISet, OITreeSet
+    from BTrees.OIBTree import OISet, OITreeSet
     from BTrees import OIBTree
     patch_intersection(OIBTree, OISet)
     patch_weightedIntersection(OIBTree, (OISet, OITreeSet))
     patch_difference(OIBTree, OISet)
 
-    from BTrees.OOBTree  import OOSet
+    from BTrees.OOBTree import OOSet
     from BTrees import OOBTree
     patch_intersection(OOBTree, OOSet)
     patch_difference(OOBTree, OOSet)
