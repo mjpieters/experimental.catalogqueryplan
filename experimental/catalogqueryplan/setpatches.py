@@ -38,10 +38,11 @@ def patch_intersection(treetype, settype):
 
         if ls < SMALLSETSIZE and lb/ls > BIGSMALLRATIO:
             new = settype()
+            ins = new.insert
+            has = big.has_key
             for i in small:
-                if big.has_key(i):
-                    new.insert(i)
-            #print '% 10d  % 10d %s' % (ls, lb, new)
+                if has(i):
+                    ins(i)
             return new
         return setintersection(o1, o2)
 

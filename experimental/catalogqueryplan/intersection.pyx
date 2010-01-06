@@ -1,7 +1,7 @@
 DEF SMALLSETSIZE = 1000
 DEF BIGSMALLRATIO = 20
 
-cdef object cintersection(object o1, object o2, settype, setintersection):
+cdef object cintersection(object o1, object o2, type settype, setintersection):
     if o1 is None:
         return o2
     if o2 is None:
@@ -10,8 +10,8 @@ cdef object cintersection(object o1, object o2, settype, setintersection):
     if not o2 or not o1:
         return setintersection(o1, o2)
 
-    cdef int l1, l2, lb, ls
-    cdef object i, small, big, new, ins, has
+    cdef int l1, l2, lb, ls, i
+    cdef object small, big, new, ins, has
 
     if isinstance(o1, int):
         l1 = 1
