@@ -82,10 +82,11 @@ def patch_difference(treetype, settype):
             l2 = len(o2)
             if l2/l1 > BIGSMALLRATIO:
                 new = settype()
+                ins = new.insert
+                has = o2.has_key
                 for i in o1:
-                    if not o2.has_key(i):
-                        new.insert(i)
-                #print '% 10d  % 10d %s' % (ls, lb, new)
+                    if not has(i):
+                        ins(i)
                 return new
 
         return setdifference(o1, o2)

@@ -1,14 +1,17 @@
 DEF SMALLSETSIZE = 1000
 DEF BIGSMALLRATIO = 20
 
-cdef object cintersection(object o1, object o2, type settype, setintersection):
+from BTrees._IIBTree import intersection as iiintersection
+from BTrees._IIBTree import IISet
+
+cpdef object ciiintersection(object o1, object o2):
     if o1 is None:
         return o2
     if o2 is None:
         return o1
 
     if not o2 or not o1:
-        return setintersection(o1, o2)
+        return iiintersection(o1, o2)
 
     cdef int l1, l2, lb, ls, i
     cdef object small, big, new, ins, has
@@ -34,17 +37,11 @@ cdef object cintersection(object o1, object o2, type settype, setintersection):
         big = o1
 
     if ls < SMALLSETSIZE and lb/ls > BIGSMALLRATIO:
-        new = settype()
+        new = IISet()
         ins = new.insert
         has = big.has_key
         for i in small:
             if has(i):
                 ins(i)
         return new
-    return setintersection(o1, o2)
-
-from BTrees._IIBTree import intersection as iiintersection
-from BTrees._IIBTree import IISet
-
-cpdef object ciiintersection(object o1, object o2):
-    return cintersection(o1, o2, IISet, iiintersection)
+    return iiintersection(o1, o2)
