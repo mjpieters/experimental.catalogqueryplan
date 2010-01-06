@@ -3,16 +3,18 @@ from setuptools import setup, find_packages, Extension, Feature
 
 version = '3.0'
 
+base = join('experimental', 'catalogqueryplan')
+
 codeoptimization = Feature("Optional code optimizations",
     standard=True,
       ext_modules=[
         Extension(
           name='experimental.catalogqueryplan.difference',
-          sources=[join('experimental', 'catalogqueryplan', 'difference.c')]
+          sources=[join(base, 'difference.c')]
         ),
         Extension(
           name='experimental.catalogqueryplan.intersection',
-          sources=[join('experimental', 'catalogqueryplan', 'intersection.c')]
+          sources=[join(base, 'intersection.c')],
         ),
       ],
 )
