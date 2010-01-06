@@ -15,11 +15,11 @@ Release
 =======
 
 In order to build a release, you need to regenerate the Cython based C code.
-To do so run:
+To do so run::
 
-bin/cython experimental/catalogqueryplan/difference.pyx
-bin/cython experimental/catalogqueryplan/intersection.pyx
+  bin/cython experimental/catalogqueryplan/difference.pyx
+  bin/cython experimental/catalogqueryplan/intersection.pyx
 
-To regenerate the C extensions, you can run:
+To regenerate the C extensions, you can run::
 
-python2.4 setup.py build_ext -if
+  python2.4 setup.py build_ext -if
