@@ -1,7 +1,7 @@
 from time import time
 import unittest
 
-import setpatches
+from experimental.catalogqueryplan import setpatches
 setpatches.apply()
 from BTrees.IIBTree import intersection as intersection2
 from BTrees.IIBTree import difference as difference2
@@ -19,6 +19,8 @@ BIGSETSIZE = 1000000
 LOOP = 100
 
 class TestIntersection(unittest.TestCase):
+
+    level = 2
 
     def pytiming(self, small, large):
         py = 0.0
@@ -130,6 +132,8 @@ class TestIntersection(unittest.TestCase):
 
 
 class TestDifference(unittest.TestCase):
+
+    level = 2
 
     def pytiming(self, small, large):
         py = 0.0

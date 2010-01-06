@@ -4,7 +4,11 @@ Changelog
 2.2 - Unreleased
 ----------------
 
-* Moved tests into a subpackage.
+* Moved the performance tests to the normal tests package and made them
+  available on test level 2.
+  [hannosch]
+
+* Moved tests into a sub-package.
   [hannosch]
 
 2.1 - 2009-11-19
