@@ -132,7 +132,7 @@ class TestIntersection(unittest.TestCase):
         large = set(xrange(bigsize))
         self.pytiming(small, large)
 
-    def DONTtest_large(self):
+    def test_large(self):
         bigsize = BIGSETSIZE
         small = IITreeSet(xrange(bigsize))
         large = IITreeSet(xrange(bigsize))
@@ -233,7 +233,7 @@ class TestDifference(unittest.TestCase):
         large = set(xrange(bigsize))
         self.pytiming(small, large)
 
-    def DONTtest_large(self):
+    def test_large(self):
         bigsize = BIGSETSIZE
         small = IITreeSet(xrange(bigsize))
         large = IITreeSet(xrange(bigsize))
