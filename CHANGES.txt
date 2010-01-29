@@ -4,6 +4,14 @@ Changelog
 3.0 - Unreleased
 ----------------
 
+* Reinstated request cache that was removed in 1.6. Catalog.getCounter() is
+  part of the key.
+  [tesdal]
+
+* Use optimized intersection instead of unoptimized weightedIntersection
+  if possible when joining result sets.
+  [tesdal]
+
 * Merged work from the querytree-cython branch. We have completely optional
   C optimizations based on Cython now.
   [hannosch]

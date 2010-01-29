@@ -2,7 +2,7 @@ from logging import getLogger
 from threading import currentThread
 from time import time
 
-from BTrees.IIBTree import weightedIntersection
+from BTrees.IIBTree import intersection, weightedIntersection, IIBucket, IIBTree
 from Products.ZCatalog.Lazy import LazyMap, LazyCat
 
 from experimental.catalogqueryplan.config import LOG_SLOW_QUERIES
@@ -18,6 +18,9 @@ VALUETYPES = []
 
 DEFAULT_PRIORITYMAP = loadPriorityMap()
 
+class RequestCache(dict):
+    def __str__(self):
+        return "<RequestCache %s items>" % len(self)
 
 def determine_value_indexes(catalog):
     # This function determines all indexes whose values should be respected
@@ -143,8 +146,19 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 r, u = r
                 if not r:
                     return LazyCat([])
-                w, rs = weightedIntersection(rs, r)
-
+                if rs is None:
+                    rs = r
+                # Because weightedIntersection isn't optimized we only use it if necessary
+                elif isinstance(rs, (IIBucket, IIBTree)) or isinstance(r, (IIBucket, IIBTree)):
+                    _i = '%s_weightedIntersection'%i
+                    index_times[_i] = time()
+                    w, rs = weightedIntersection(rs, r)
+                    index_times[_i] = time() - index_times[_i]
+                else:
+                    _i = '%s_intersection'%i
+                    index_times[_i] = time()
+                    rs = intersection(rs, r)
+                    index_times[_i] = time() - index_times[_i]
     duration =  time() - start
     if LOG_SLOW_QUERIES and duration >= LONG_QUERY_TIME:
         detailed_times = []
