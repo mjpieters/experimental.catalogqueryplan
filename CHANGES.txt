@@ -1,8 +1,11 @@
 Changelog
 =========
 
-3.0 - Unreleased
-----------------
+3.0a1 - Unreleased
+------------------
+
+* Updated to Cython 0.12.1.
+  [hannosch]
 
 * Reinstated request cache that was removed in 1.6. Catalog.getCounter() is
   part of the key.
