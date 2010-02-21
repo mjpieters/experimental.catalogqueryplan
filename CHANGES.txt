@@ -4,6 +4,8 @@ Changelog
 3.0a2 - unreleased
 ------------------
 
+* Marked this package as a Plone plugin.
+  [hannosch]
 
 3.0a1 - 2010-02-21
 ------------------
