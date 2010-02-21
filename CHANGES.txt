@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0a1 - Unreleased
+3.0a1 - 2010-02-21
 ------------------
 
 * Updated to Cython 0.12.1.
