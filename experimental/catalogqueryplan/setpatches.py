@@ -22,21 +22,22 @@ def patch_intersection(treetype, settype):
             # Avoid len of unsized or zero division
             return setintersection(o1, o2)
 
-        l1 = len(o1)
-        l2 = len(o2)
+        s1 = isinstance(o1, settype)
+        s2 = isinstance(o2, settype)
 
-        if l1 < l2:
-            ls = l1
-            small = o1
-            lb = l2
-            big = o2
-        else:
-            ls = l2
-            small = o2
-            lb = l1
-            big = o1
+        if s1 or s2:
+            # Only do this if one of them is a set, we are slower at treesets.
+            # We don't check the size of the treeset, so we sometimes loop over
+            # a very small one, but there's no way to tell, without loading it.
+            if s1 and len(o1) < SMALLSETSIZE:
+                small = o1
+                big = o2
+            elif s2 and len(o2) < SMALLSETSIZE:
+                small = o1
+                big = o2
+            else:
+                return setintersection(o1, o2)
 
-        if ls < SMALLSETSIZE and lb/ls > BIGSMALLRATIO:
             new = settype()
             ins = new.insert
             has = big.has_key

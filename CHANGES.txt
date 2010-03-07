@@ -4,6 +4,12 @@ Changelog
 3.0a3 - unreleased
 ------------------
 
+* Changed intersection algorithm to avoid calculating the length of tree sets,
+  as this would cause a scan of all their buckets. Intersections of sets with
+  large tree sets are 10x faster while intersections of small sets and small
+  tree sets are 50% slower.
+  [hannosch, tesdal]
+
 * Expanded performance tests to check against small treesets.
   [hannosch]
 

@@ -13,30 +13,26 @@ cpdef object ciiintersection(object o1, object o2):
     if not o2 or not o1:
         return iiintersection(o1, o2)
 
-    cdef int l1, l2, lb, ls, i
+    cdef bool s1, s2
     cdef object small, big, new, ins, has
 
-    if isinstance(o1, int):
-        l1 = 1
-    else:
-        l1 = len(o1)
-    if isinstance(o2, int):
-        l2 = 1
-    else:
-        l2 = len(o2)
+    s1 = isinstance(o1, IISet)
+    s2 = isinstance(o2, IISet)
 
-    if l1 < l2:
-        ls = l1
-        small = o1
-        lb = l2
-        big = o2
-    else:
-        ls = l2
-        small = o2
-        lb = l1
-        big = o1
+    if s1 or s2:
+        # Only do this if one of them is a set, we are slower at treesets.
+        # We don't check the size of the treeset, so we sometimes loop over
+        # a very small one, but there's no way to tell, without loading it.
 
-    if ls < SMALLSETSIZE and lb/ls > BIGSMALLRATIO:
+        if s1 and len(o1) < SMALLSETSIZE:
+            small = o1
+            big = o2
+        elif s2 and len(o2) < SMALLSETSIZE:
+            small = o1
+            big = o2
+        else:
+            return iiintersection(o1, o2)
+
         new = IISet()
         ins = new.insert
         has = big.has_key
