@@ -13,12 +13,21 @@ class Views(BrowserView):
         print >> output, 'queryplan = {'
         for obj in self.context.objectValues():
             if IZCatalog.providedBy(obj):
+                identifier = '/'.join(obj.getPhysicalPath())
                 data = getattr(obj._catalog, '_v_prioritymap', None)
                 if data:
-                    identifier = '/'.join(obj.getPhysicalPath())
                     print >> output, '  %r: {' % identifier
                     for item in sorted(data.items()):
                         print >> output, '    %s:\n      %r,' % item
                     print >> output, '  },'
+                data = getattr(obj._catalog, '_v_valueindexes', None)
+                # TODO: Instead of trusting the simple algorithm, we could do
+                # some more expensive calculation here and actually check if
+                # the proposed indexes have an uneven value distribution
+                if data:
+                    print >> output, "  '%s:valueindexes': frozenset([" % identifier
+                    for item in sorted(data):
+                        print >> output, '    %r,' % item
+                    print >> output, '  ]),'
         print >> output, '}\n'
         return output.getvalue()

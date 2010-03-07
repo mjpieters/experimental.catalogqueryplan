@@ -4,6 +4,10 @@ Changelog
 3.0a3 - unreleased
 ------------------
 
+* Extended the stored queryplan format to optionally contain the value indexes
+  set. This also makes it possible to manually influence the set.
+  [hannosch]
+
 * Changed intersection algorithm to avoid calculating the length of tree sets,
   as this would cause a scan of all their buckets. Intersections of sets with
   large tree sets are 10x faster while intersections of small sets and small

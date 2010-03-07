@@ -55,6 +55,10 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 prioritymap = self._v_prioritymap = default.copy()
             else:
                 prioritymap = self._v_prioritymap = {}
+            valueidentifier = identifier + ':valueindexes'
+            valuedefault = DEFAULT_PRIORITYMAP.get(valueidentifier, None)
+            if valuedefault is not None:
+                self._v_valueindexes = valuedefault.copy()
         else:
             logger.info('initializing empty priority map for %r (thread %s)',
                 identifier, currentThread().getName())
