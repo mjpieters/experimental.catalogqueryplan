@@ -1,9 +1,11 @@
 Changelog
 =========
 
-3.0a4 - unreleased
-------------------
+3.0 - 2010-05-13
+----------------
 
+* Fixed tests to work with latest Zope 2.12 release.
+  [hannosch]
 
 3.0a3 - 2010-03-08
 ------------------
@@ -18,7 +20,7 @@ Changelog
   tree sets are 50% slower.
   [hannosch, tesdal]
 
-* Expanded performance tests to check against small treesets.
+* Expanded performance tests to check against small tree sets.
   [hannosch]
 
 3.0a2 - 2010-02-21

@@ -1,5 +1,4 @@
 import unittest
-from Testing import ZopeTestCase
 
 from experimental.catalogqueryplan import setpatches
 setpatches.apply()
@@ -37,9 +36,6 @@ class TestDateIndex(test_DateIndex.DI_Tests):
     pass
 
 from Products.ExtendedPathIndex.tests import testExtendedPathIndex
-class TestPathIndex(testExtendedPathIndex.TestPathIndex):
-    pass
-
 class TestExtendedPathIndex(testExtendedPathIndex.TestExtendedPathIndex):
     pass
 
@@ -142,7 +138,6 @@ def test_suite():
     suite.addTest(makeSuite(TestFieldIndex))
     suite.addTest(makeSuite(TestKeywordIndex))
     suite.addTest(makeSuite(TestDateIndex))
-    suite.addTest(makeSuite(TestPathIndex))
     suite.addTest(makeSuite(TestExtendedPathIndex))
     suite.addTest(makeSuite(TestPureII))
     suite.addTest(makeSuite(TestPureIO))
