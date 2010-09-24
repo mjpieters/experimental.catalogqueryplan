@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.1 - unreleased
+3.0.1 - 2010-09-24
 ------------------
 
 * Update to Cython 0.13.
