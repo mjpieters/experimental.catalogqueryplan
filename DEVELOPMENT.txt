@@ -5,11 +5,11 @@ The package is its own buildout you can install.
 
 In order to run the tests of the package, just do::
 
-  ./bin/test
+  bin/test
 
 If you also want to run the performance tests run::
 
-  ./bin/test -a 2
+  bin/test -a 2
 
 Release
 =======
