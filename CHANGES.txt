@@ -4,6 +4,9 @@ Changelog
 3.0.1 - unreleased
 ------------------
 
+* Update to Cython 0.13.
+  [hannosch]
+
 * Make sure to patch the intersection function in our own catalog module.
   Depending on import time order effects we could end up with the standard
   intersection function which performs horribly for the reference catalog.

@@ -1,6 +1,7 @@
 DEF SMALLSETSIZE = 1000
 DEF BIGSMALLRATIO = 20
 
+from cpython cimport bool
 from BTrees._IIBTree import intersection as iiintersection
 from BTrees._IIBTree import IISet
 
