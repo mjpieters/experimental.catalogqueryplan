@@ -13,7 +13,7 @@ except ImportError:
     HAS_COPTIMIZATIONS = False
 
 
-def patch_intersection(treetype, settype):
+def patch_intersection(treetype, settype, module=None):
 
     setintersection = treetype.intersection
 
@@ -51,14 +51,18 @@ def patch_intersection(treetype, settype):
         treetype._old_intersection = treetype.intersection
         treetype.intersection = intersection
         logger.debug('Patched %s' % str(treetype.intersection))
+    if module is not None and not hasattr(module, '_old_intersection'):
+        module._old_intersection = module.intersection
+        module.intersection = intersection
+        logger.debug('Patched %s' % str(module.intersection))
 
 
-def patch_weightedIntersection(treetype, settype):
+def patch_weightedIntersection(treetype, settypes):
     setintersection = treetype.intersection
     weightedsetintersection = treetype.weightedIntersection
 
     def weightedIntersection(o1, o2, w1=1, w2=1):
-        if isinstance(o1, settype) and isinstance(o2, settype):
+        if isinstance(o1, settypes) and isinstance(o2, settypes):
             return (w1+w2), setintersection(o1, o2)
         return weightedsetintersection(o1, o2, w1, w2)
 
@@ -98,24 +102,26 @@ def patch_difference(treetype, settype):
         logger.debug('Patched %s' % str(treetype.difference))
 
 
-def patch_cintersection(treetype, method):
-    if not hasattr(treetype, '_old_intersection'):
-        treetype._old_intersection = treetype.intersection
-        treetype.intersection = method
-        logger.debug('Patched %s' % str(treetype.intersection))
+def patch_cintersection(module, method):
+    if not hasattr(module, '_old_intersection'):
+        module._old_intersection = module.intersection
+        module.intersection = method
+        logger.debug('Patched %s' % str(module.intersection))
 
 
-def patch_cdifference(treetype, method):
-    if not hasattr(treetype, '_old_difference'):
-        treetype._old_difference = treetype.difference
-        treetype.difference = method
-        logger.debug('Patched %s' % str(treetype.difference))
+def patch_cdifference(module, method):
+    if not hasattr(module, '_old_difference'):
+        module._old_difference = module.difference
+        module.difference = method
+        logger.debug('Patched %s' % str(module.difference))
 
 
 def apply(no_coptimizations=False):
     global HAS_COPTIMIZATIONS
     if no_coptimizations:
         HAS_COPTIMIZATIONS = False
+
+    from experimental.catalogqueryplan import catalog
 
     from BTrees.IIBTree import IISet, IITreeSet
     from BTrees import IIBTree
@@ -124,9 +130,10 @@ def apply(no_coptimizations=False):
     if HAS_COPTIMIZATIONS:
         patch_cdifference(IIBTree, ciidifference)
         patch_cintersection(IIBTree, ciiintersection)
+        patch_cintersection(catalog, ciiintersection)
     else:
-        patch_intersection(IIBTree, IISet)
         patch_difference(IIBTree, IISet)
+        patch_intersection(IIBTree, IISet, catalog)
 
     from BTrees.IOBTree import IOSet
     from BTrees import IOBTree

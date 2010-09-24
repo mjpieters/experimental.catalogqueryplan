@@ -1,9 +1,13 @@
 Changelog
 =========
 
-3.1a1 - unreleased
+3.0.1 - unreleased
 ------------------
 
+* Make sure to patch the intersection function in our own catalog module.
+  Depending on import time order effects we could end up with the standard
+  intersection function which performs horribly for the reference catalog.
+  [hannosch]
 
 3.0 - 2010-05-13
 ----------------
