@@ -35,6 +35,10 @@ from Products.PluginIndexes.DateIndex.tests import test_DateIndex
 class TestDateIndex(test_DateIndex.DI_Tests):
     pass
 
+from Products.PluginIndexes.DateRangeIndex.tests import test_DateRangeIndex
+class TestDateRangeIndex(test_DateRangeIndex.DRI_Tests):
+    pass
+
 from Products.ExtendedPathIndex.tests import testExtendedPathIndex
 class TestExtendedPathIndex(testExtendedPathIndex.TestExtendedPathIndex):
     pass
@@ -138,6 +142,7 @@ def test_suite():
     suite.addTest(makeSuite(TestFieldIndex))
     suite.addTest(makeSuite(TestKeywordIndex))
     suite.addTest(makeSuite(TestDateIndex))
+    suite.addTest(makeSuite(TestDateRangeIndex))
     suite.addTest(makeSuite(TestExtendedPathIndex))
     suite.addTest(makeSuite(TestPureII))
     suite.addTest(makeSuite(TestPureIO))

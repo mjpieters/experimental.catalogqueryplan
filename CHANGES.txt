@@ -4,6 +4,9 @@ Changelog
 3.0.2 - unreleased
 ------------------
 
+* Subtract inverse set in daterangeindex as that is usually significantly
+  smaller than the set of content within range (like effectiveRange).
+  [tesdal]
 
 3.0.1 - 2010-09-24
 ------------------
