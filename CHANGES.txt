@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.2 - unreleased
+3.0.2 - 2010-09-28
 ------------------
 
 * Subtract inverse set in daterangeindex as that is usually significantly
