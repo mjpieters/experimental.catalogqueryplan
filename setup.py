@@ -1,7 +1,7 @@
 from os.path import join
 from setuptools import setup, find_packages, Extension, Feature
 
-version = '3.0.2'
+version = '3.0.3'
 
 base = join('experimental', 'catalogqueryplan')
 
