@@ -4,6 +4,8 @@ Changelog
 3.0.3 - unreleased
 ------------------
 
+* Update to Cython 0.14.
+  [hannosch]
 
 3.0.2 - 2010-09-28
 ------------------
