@@ -1,10 +1,12 @@
+from bisect import bisect
 from logging import getLogger
 from threading import currentThread
 from time import time
 
-from BTrees.IIBTree import intersection, weightedIntersection, IIBucket, IIBTree
-from Products.ZCatalog.Lazy import LazyMap, LazyCat
+from BTrees.IIBTree import intersection, weightedIntersection
+from BTrees.IIBTree import IIBucket, IIBTree, IISet
 
+from .lazy import LazyMap, LazyCat, LazyValues
 from experimental.catalogqueryplan.config import LOG_SLOW_QUERIES
 from experimental.catalogqueryplan.config import LONG_QUERY_TIME
 from experimental.catalogqueryplan.utils import loadPriorityMap
@@ -173,20 +175,28 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
             info += ', detailed: %s' % (', '.join(detailed_times))
         logger.info(info)
 
+    # Try to deduce the sort limit from batching arguments
+    if limit is None:
+        if 'b_start' in keydict and 'b_size' in keydict:
+            limit = int(keydict['b_start']) + int(keydict['b_size'])
+
     if rs is None:
         # None of the indexes found anything to do with the request
         # We take this to mean that the query was empty (an empty filter)
         # and so we return everything in the catalog
+        rlen = len(self)
         if sort_index is None:
-            return LazyMap(self.instantiate, self.data.items(), len(self))
+            return LazyMap(self.instantiate, self.data.items(), rlen, rlen)
         else:
-            return self.sortResults(
-                self.data, sort_index, reverse,  limit, merge)
+            result = self.sortResults(
+                self.data, sort_index, reverse,  limit, merge, rlen)
+            return result
     elif rs:
         # We got some results from the indexes.
         # Sort and convert to sequences.
         # XXX: The check for 'values' is really stupid since we call
         # items() and *not* values()
+        rlen = len(rs)
         if sort_index is None and hasattr(rs, 'values'):
             # having a 'values' means we have a data structure with
             # scores.  Build a new result set, sort it by score, reverse
@@ -220,25 +230,176 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 r.data_record_normalized_score_ = int(100. * score / max)
                 return r
 
-            return LazyMap(getScoredResult, rs, len(rs))
+            return LazyMap(getScoredResult, rs, rlen, rlen)
 
         elif sort_index is None and not hasattr(rs, 'values'):
             # no scores
             if hasattr(rs, 'keys'):
                 rs = rs.keys()
-            return LazyMap(self.__getitem__, rs, len(rs))
+            return LazyMap(self.__getitem__, rs, rlen, rlen)
         else:
             # sort.  If there are scores, then this block is not
             # reached, therefore 'sort-on' does not happen in the
             # context of a text index query.  This should probably
             # sort by relevance first, then the 'sort-on' attribute.
-            return self.sortResults(rs, sort_index, reverse, limit, merge)
+            rlen = len(rs)
+            result = self.sortResults(rs, sort_index, reverse, limit, merge,
+                rlen)
+            # import pdb; pdb.set_trace( )
+            return result
     else:
         # Empty result set
         return LazyCat([])
 
 
+def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
+                actual_result_count=None):
+    # Sort a result set using a sort index. Return a lazy
+    # result set in sorted order if merge is true otherwise
+    # returns a list of (sortkey, uid, getter_function) tuples
+    #
+    # The two 'for' loops in here contribute a significant
+    # proportion of the time to perform an indexed search.
+    # Try to avoid all non-local attribute lookup inside
+    # those loops.
+    _intersection = intersection
+    _self__getitem__ = self.__getitem__
+    index_key_map = sort_index.documentToKeyMap()
+    _None = None
+    _keyerror = KeyError
+    result = []
+    append = result.append
+    if hasattr(rs, 'keys'):
+        rs = rs.keys()
+    if actual_result_count is None:
+        rlen = len(rs)
+        actual_result_count = rlen
+    else:
+        rlen = actual_result_count
+
+    if merge and limit is None and (
+        rlen > (len(sort_index) * (rlen / 100 + 1))):
+        # The result set is much larger than the sorted index,
+        # so iterate over the sorted index for speed.
+        # This is rarely exercised in practice...
+
+        length = 0
+
+        try:
+            intersection(rs, IISet(()))
+        except TypeError:
+            # rs is not an object in the IIBTree family.
+            # Try to turn rs into an IISet.
+            rs = IISet(rs)
+
+        for k, intset in sort_index.items():
+            # We have an index that has a set of values for
+            # each sort key, so we intersect with each set and
+            # get a sorted sequence of the intersections.
+            intset = _intersection(rs, intset)
+            if intset:
+                keys = getattr(intset, 'keys', _None)
+                if keys is not _None:
+                    # Is this ever true?
+                    intset = keys()
+                length += len(intset)
+                append((k, intset, _self__getitem__))
+                # Note that sort keys are unique.
+
+        if reverse:
+            result.sort(reverse=True)
+        else:
+            result.sort()
+        result = LazyCat(LazyValues(result), length, actual_result_count)
+    elif limit is None or (limit * 4 > rlen):
+        # Iterate over the result set getting sort keys from the index
+        for did in rs:
+            try:
+                key = index_key_map[did]
+            except _keyerror:
+                # This document is not in the sort key index, skip it.
+                pass
+            else:
+                append((key, did, _self__getitem__))
+                # The reference back to __getitem__ is used in case
+                # we do not merge now and need to intermingle the
+                # results with those of other catalogs while avoiding
+                # the cost of instantiating a LazyMap per result
+        if merge:
+            if reverse:
+                result.sort(reverse=True)
+            else:
+                result.sort()
+            if limit is not None:
+                result = result[:limit]
+            result = LazyValues(result)
+            result.actual_result_count = actual_result_count
+        else:
+            return result
+    elif reverse:
+        # Limit/sort results using N-Best algorithm
+        # This is faster for large sets then a full sort
+        # And uses far less memory
+        keys = []
+        n = 0
+        worst = None
+        for did in rs:
+            try:
+                key = index_key_map[did]
+            except _keyerror:
+                # This document is not in the sort key index, skip it.
+                pass
+            else:
+                if n >= limit and key <= worst:
+                    continue
+                i = bisect(keys, key)
+                keys.insert(i, key)
+                result.insert(i, (key, did, _self__getitem__))
+                if n == limit:
+                    del keys[0], result[0]
+                else:
+                    n += 1
+                worst = keys[0]
+        result.reverse()
+        if merge:
+            result = LazyValues(result)
+            result.actual_result_count = actual_result_count
+        else:
+            return result
+    elif not reverse:
+        # Limit/sort results using N-Best algorithm in reverse (N-Worst?)
+        keys = []
+        n = 0
+        best = None
+        for did in rs:
+            try:
+                key = index_key_map[did]
+            except _keyerror:
+                # This document is not in the sort key index, skip it.
+                pass
+            else:
+                if n >= limit and key >= best:
+                    continue
+                i = bisect(keys, key)
+                keys.insert(i, key)
+                result.insert(i, (key, did, _self__getitem__))
+                if n == limit:
+                    del keys[-1], result[-1]
+                else:
+                    n += 1
+                best = keys[-1]
+        if merge:
+            result = LazyValues(result)
+            result.actual_result_count = actual_result_count
+        else:
+            return result
+
+    return LazyMap(self.__getitem__, result, len(result),
+        actual_result_count=actual_result_count)
+
+
 def patch_catalog():
     from Products.ZCatalog.Catalog import Catalog
     Catalog.search = search
+    Catalog.sortResults = sortResults
     logger.debug('Patched Catalog.search')
