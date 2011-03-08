@@ -6,9 +6,9 @@ from time import time
 from BTrees.IIBTree import intersection, weightedIntersection
 from BTrees.IIBTree import IIBucket, IIBTree, IISet
 
-from lazy import LazyMap, LazyCat, LazyValues
 from experimental.catalogqueryplan.config import LOG_SLOW_QUERIES
 from experimental.catalogqueryplan.config import LONG_QUERY_TIME
+from experimental.catalogqueryplan.lazy import LazyMap, LazyCat, LazyValues
 from experimental.catalogqueryplan.utils import loadPriorityMap
 
 logger = getLogger('catalogqueryplan')
