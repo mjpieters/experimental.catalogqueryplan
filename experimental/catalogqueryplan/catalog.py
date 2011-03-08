@@ -177,8 +177,15 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
 
     # Try to deduce the sort limit from batching arguments
     if limit is None:
-        if 'b_start' in keydict and 'b_size' in keydict:
-            limit = int(keydict['b_start']) + int(keydict['b_size'])
+        b_start = int(keydict.get('b_start', 0))
+        b_size = keydict.get('b_size', None)
+        if b_size is not None:
+            b_size = int(b_size)
+
+        if b_size is not None:
+            limit = b_start + b_size
+        elif limit and b_size is None:
+            b_size = limit
 
     if rs is None:
         # None of the indexes found anything to do with the request
@@ -186,10 +193,15 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
         # and so we return everything in the catalog
         rlen = len(self)
         if sort_index is None:
-            return LazyMap(self.instantiate, self.data.items(), rlen, rlen)
+            sequence, slen = self._limit_sequence(self.data.items(), rlen,
+                b_start, b_size)
+            result = LazyMap(self.instantiate, sequence, slen,
+                actual_result_count=rlen)
         else:
             result = self.sortResults(
-                self.data, sort_index, reverse,  limit, merge, rlen)
+                self.data, sort_index, reverse, limit, merge,
+                    actual_result_count=rlen, b_start=b_start,
+                    b_size=b_size)
             return result
     elif rs:
         # We got some results from the indexes.
@@ -230,26 +242,31 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
                 r.data_record_normalized_score_ = int(100. * score / max)
                 return r
 
-            return LazyMap(getScoredResult, rs, rlen, rlen)
+            sequence, slen = self._limit_sequence(rs, rlen, b_start,
+                b_size)
+            result = LazyMap(getScoredResult, sequence, slen,
+                actual_result_count=rlen)
 
         elif sort_index is None and not hasattr(rs, 'values'):
             # no scores
             if hasattr(rs, 'keys'):
                 rs = rs.keys()
-            return LazyMap(self.__getitem__, rs, rlen, rlen)
+            sequence, slen = self._limit_sequence(rs, rlen, b_start,
+                b_size)
+            result = LazyMap(self.__getitem__, sequence, slen,
+                actual_result_count=rlen)
         else:
             # sort.  If there are scores, then this block is not
             # reached, therefore 'sort-on' does not happen in the
             # context of a text index query.  This should probably
             # sort by relevance first, then the 'sort-on' attribute.
-            rlen = len(rs)
-            result = self.sortResults(rs, sort_index, reverse, limit, merge,
-                rlen)
-            # import pdb; pdb.set_trace( )
-            return result
+            result = self.sortResults(rs, sort_index, reverse, limit,
+                merge, actual_result_count=rlen, b_start=b_start,
+                b_size=b_size)
     else:
         # Empty result set
         return LazyCat([])
+    return result
 
 
 def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
