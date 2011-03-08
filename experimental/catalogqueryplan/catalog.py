@@ -253,7 +253,7 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
 
 
 def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
-                actual_result_count=None):
+                actual_result_count=None, b_start=0, b_size=None):
     # Sort a result set using a sort index. Return a lazy
     # result set in sorted order if merge is true otherwise
     # returns a list of (sortkey, uid, getter_function) tuples
@@ -276,6 +276,29 @@ def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
         actual_result_count = rlen
     else:
         rlen = actual_result_count
+
+    # don't limit to more than what we have
+    if limit is not None and limit >= rlen:
+        limit = rlen
+
+    # if we want a batch from the end of the resultset, reverse sorting
+    # order and limit it, then reverse the resultset again
+    switched_reverse = False
+    if b_start and b_start > rlen / 2:
+        reverse = not reverse
+        switched_reverse = True
+        b_end = b_start + b_size
+        if b_end >= rlen:
+            overrun = rlen - b_end
+            if b_start >= rlen:
+                # bail out, we are outside the possible range
+                return LazyCat([], 0, actual_result_count)
+            else:
+                b_size += overrun
+            b_start = 0
+        else:
+            b_start = b_end - b_start
+        limit = b_start + b_size
 
     if merge and limit is None and (
         rlen > (len(sort_index) * (rlen / 100 + 1))):
@@ -310,7 +333,9 @@ def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
             result.sort(reverse=True)
         else:
             result.sort()
-        result = LazyCat(LazyValues(result), length, actual_result_count)
+        sequence, slen = self._limit_sequence(result, length, b_start,
+            b_size, switched_reverse)
+        result = LazyCat(LazyValues(sequence), slen, actual_result_count)
     elif limit is None or (limit * 4 > rlen):
         # Iterate over the result set getting sort keys from the index
         for did in rs:
@@ -332,10 +357,14 @@ def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
                 result.sort()
             if limit is not None:
                 result = result[:limit]
-            result = LazyValues(result)
+            sequence, _ = self._limit_sequence(result, 0, b_start, b_size,
+                switched_reverse)
+            result = LazyValues(sequence)
             result.actual_result_count = actual_result_count
         else:
-            return result
+            sequence, _ = self._limit_sequence(result, 0, b_start, b_size,
+                switched_reverse)
+            return sequence
     elif reverse:
         # Limit/sort results using N-Best algorithm
         # This is faster for large sets then a full sort
@@ -362,10 +391,14 @@ def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
                 worst = keys[0]
         result.reverse()
         if merge:
-            result = LazyValues(result)
+            sequence, _ = self._limit_sequence(result, 0, b_start, b_size,
+                switched_reverse)
+            result = LazyValues(sequence)
             result.actual_result_count = actual_result_count
         else:
-            return result
+            sequence, _ = self._limit_sequence(result, 0, b_start, b_size,
+                switched_reverse)
+            return sequence
     elif not reverse:
         # Limit/sort results using N-Best algorithm in reverse (N-Worst?)
         keys = []
@@ -389,17 +422,33 @@ def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
                     n += 1
                 best = keys[-1]
         if merge:
-            result = LazyValues(result)
+            sequence, _ = self._limit_sequence(result, 0, b_start, b_size,
+                switched_reverse)
+            result = LazyValues(sequence)
             result.actual_result_count = actual_result_count
         else:
-            return result
+            sequence, _ = self._limit_sequence(result, 0, b_start, b_size,
+                switched_reverse)
+            return sequence
 
     return LazyMap(self.__getitem__, result, len(result),
         actual_result_count=actual_result_count)
+
+
+def _limit_sequence(self, sequence, slen, b_start=0, b_size=None,
+                    switched_reverse=False):
+    if b_size is not None:
+        sequence = sequence[b_start:b_start + b_size]
+        if slen:
+            slen = len(sequence)
+    if switched_reverse:
+        sequence.reverse()
+    return (sequence, slen)
 
 
 def patch_catalog():
     from Products.ZCatalog.Catalog import Catalog
     Catalog.search = search
     Catalog.sortResults = sortResults
+    Catalog._limit_sequence = _limit_sequence
     logger.debug('Patched Catalog.search')
