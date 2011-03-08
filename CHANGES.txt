@@ -4,6 +4,8 @@ Changelog
 3.1.1 - unreleased
 ------------------
 
+* Avoid using the relative import syntax introduced in Python 2.5.
+  [hannosch]
 
 3.1.0 - 2010-12-27
 ------------------
@@ -11,6 +13,7 @@ Changelog
 * Added automatic sorting limit calculation based on batch arguments. If the
   query contains a `b_start` and `b_size` argument and no explicit `sort_limit`
   is provided, the sort limit will be calculated as `b_start + b_size`.
+  [hannosch]
 
 * Backported `Products.ZCatalog.Lazy` improvements from its 2.13.2 release.
 
