@@ -176,16 +176,15 @@ def search(self, request, sort_index=None, reverse=0, limit=None, merge=1):
         logger.info(info)
 
     # Try to deduce the sort limit from batching arguments
-    if limit is None:
-        b_start = int(keydict.get('b_start', 0))
-        b_size = keydict.get('b_size', None)
-        if b_size is not None:
-            b_size = int(b_size)
+    b_start = int(keydict.get('b_start', 0))
+    b_size = keydict.get('b_size', None)
+    if b_size is not None:
+        b_size = int(b_size)
 
-        if b_size is not None:
-            limit = b_start + b_size
-        elif limit and b_size is None:
-            b_size = limit
+    if b_size is not None:
+        limit = b_start + b_size
+    elif limit and b_size is None:
+        b_size = limit
 
     if rs is None:
         # None of the indexes found anything to do with the request
