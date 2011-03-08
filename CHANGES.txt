@@ -4,6 +4,9 @@ Changelog
 3.1.1 - unreleased
 ------------------
 
+* Update to Cython 0.14.1.
+  [hannosch]
+
 * Avoid using the relative import syntax introduced in Python 2.5.
   [hannosch]
 
