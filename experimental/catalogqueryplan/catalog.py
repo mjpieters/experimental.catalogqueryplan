@@ -462,9 +462,26 @@ def _limit_sequence(self, sequence, slen, b_start=0, b_size=None,
     return (sequence, slen)
 
 
+def getitem(self, index):
+    if getattr(self._sequence, 'actual_result_count', None) != self.length:
+        # optmized batch that contains only the wanted items in the sequence
+        return self._sequence[index]
+    if index < 0:
+        if index + self.end < self.first:
+            raise IndexError(index)
+        return self._sequence[index + self.end]
+
+    if index >= self.length:
+        raise IndexError(index)
+    return self._sequence[index + self.first]
+
+
 def patch_catalog():
     from Products.ZCatalog.Catalog import Catalog
     Catalog.search = search
     Catalog.sortResults = sortResults
     Catalog._limit_sequence = _limit_sequence
     logger.debug('Patched Catalog.search')
+    from Products.CMFPlone.PloneBatch import Batch
+    Batch.__getitem__ = getitem
+    logger.debug('Patched PloneBatch.__getitem__')
