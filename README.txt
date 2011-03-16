@@ -39,7 +39,6 @@ query value will become part of the key as well. These type of indexes often
 have an uneven distribution of indexed keys to values. For example there might
 be very few `pending` documents in a site, but many `published` ones.
 
-
 Testing
 =======
 
@@ -48,3 +47,9 @@ To test, import the monkey patch in other tests, like CMFPlone::
  import experimental.catalogqueryplan
 
 and run the test.
+
+Development
+===========
+
+Development of this project takes place at:
+https://github.com/Jarn/experimental.catalogqueryplan
