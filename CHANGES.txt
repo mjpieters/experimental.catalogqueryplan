@@ -4,6 +4,8 @@ Changelog
 3.2.1 - unreleased
 ------------------
 
+- Specify minimum requirement of Plone >= 4.0.3.
+  [hannosch]
 
 3.2.0 - 2011-03-08
 ------------------

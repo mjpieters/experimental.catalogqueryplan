@@ -40,6 +40,7 @@ setup(name='experimental.catalogqueryplan',
       features = {'codeoptimization': codeoptimization},
       install_requires=[
           'setuptools',
+          'Plone >= 4.0.3',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]
