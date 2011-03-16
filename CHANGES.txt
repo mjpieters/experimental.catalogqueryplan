@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.2.1 - unreleased
+3.2.1 - 2011-03-16
 ------------------
 
 - Specify minimum requirement for the 3.2.x series of Plone >= 4.0.3.
