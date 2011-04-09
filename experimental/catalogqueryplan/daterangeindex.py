@@ -42,7 +42,8 @@ def daterangeindex_apply_index(self, request, cid='', res=None):
                     if res is None:
                         return cached, (self._since_field, self._until_field)
                     else:
-                        return difference(res, cached), (self._since_field, self._until_field)
+                        return (difference(res, cached),
+                            (self._since_field, self._until_field))
 
     if res is None:
         #
@@ -51,9 +52,7 @@ def daterangeindex_apply_index(self, request, cid='', res=None):
         #   XXX Does this apply for multiunion?
         #
         until_only = multiunion(self._until_only.values(term))
-
         since_only = multiunion(self._since_only.values(None, term))
-
         until = multiunion(self._until.values(term))
 
         # Total result is bound by res
@@ -61,10 +60,9 @@ def daterangeindex_apply_index(self, request, cid='', res=None):
             until = intersection(res, until)
 
         since = multiunion(self._since.values(None, term))
-
         bounded = intersection(until, since)
-
         result = multiunion([bounded, until_only, since_only, self._always])
+
         if REQUEST is not None and catalog is not None:
             cache[cachekey] = result
 
