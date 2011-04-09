@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.2.2 - unreleased
+3.2.2 - 2011-04-09
 ------------------
 
 - Backport c121349 from ZCatalog, optimizing the date range index to add a
