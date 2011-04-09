@@ -28,10 +28,12 @@ def daterangeindex_apply_index(self, request, cid='', res=None):
         if catalog is not None:
             key = '%s_%s'%(catalog.getId(), catalog.getCounter())
             cache = REQUEST.get(key, None)
+            tid = isinstance(term, int) and term / 10 or 'None'
+            index_id = self.getId()
             if res is None:
-                cachekey = '_daterangeindex_%s_%s' % (self.getId(), term/10)
+                cachekey = '_daterangeindex_%s_%s' % (index_id, tid)
             else:
-                cachekey = '_daterangeindex_inverse_%s_%s' % (self.getId(), term/10)
+                cachekey = '_daterangeindex_inverse_%s_%s' % (index_id, tid)
             if cache is None:
                 cache = REQUEST[key] = RequestCache()
             else:
