@@ -1,13 +1,19 @@
+from datetime import datetime
+
 from Acquisition import aq_inner, aq_parent
 from BTrees.IIBTree import multiunion
 from BTrees.IIBTree import intersection
 from BTrees.IIBTree import difference
+from DateTime.DateTime import DateTime
 from Products.PluginIndexes.common.util import parseIndexRequest
 from experimental.catalogqueryplan.catalog import RequestCache
 
 from logging import getLogger
 
 logger = getLogger('experimental.catalogqueryplan')
+
+MAX32 = int(2**31 - 1)
+
 
 def daterangeindex_apply_index(self, request, cid='', res=None):
     record = parseIndexRequest(request, self.getId())
@@ -73,9 +79,32 @@ def daterangeindex_apply_index(self, request, cid='', res=None):
             cache[cachekey] = result
         return difference(res, result), (self._since_field, self._until_field)
 
+
+def _convertDateTime(self, value):
+    if value is None:
+        return value
+    if isinstance(value, (str, datetime)):
+        dt_obj = DateTime(value)
+        value = dt_obj.millis() / 1000 / 60 # flatten to minutes
+    elif isinstance(value, DateTime):
+        value = value.millis() / 1000 / 60 # flatten to minutes
+    if value > MAX32 or value < -MAX32:
+        # t_val must be integer fitting in the 32bit range
+        raise OverflowError('%s is not within the range of dates allowed'
+                            'by a DateRangeIndex' % value)
+    value = int(value)
+    # handle values outside our specified range
+    if value > 278751600:
+        return None
+    elif value < -510162480:
+        return None
+    return value
+
+
 def patch_daterangeindex():
     from Products.PluginIndexes.DateRangeIndex.DateRangeIndex import DateRangeIndex
     DateRangeIndex._apply_index = daterangeindex_apply_index
+    DateRangeIndex._convertDateTime = _convertDateTime
 
     from catalog import ADVANCEDTYPES
     ADVANCEDTYPES.append(DateRangeIndex)

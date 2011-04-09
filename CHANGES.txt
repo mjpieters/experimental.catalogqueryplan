@@ -4,6 +4,10 @@ Changelog
 3.2.2 - unreleased
 ------------------
 
+- Backport c121349 from ZCatalog, optimizing the date range index to add a
+  floor and ceiling date. In this version it's hardcoded values.
+  [hannosch]
+
 - Backport c121191 from ZCatalog, which fixes an edge-case in the date range
   index optimization.
   [hannosch]
