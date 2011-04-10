@@ -1,9 +1,11 @@
 Changelog
 =========
 
-3.2.3 - unreleased
+3.2.3 - 2011-04-10
 ------------------
 
+- Specify supported Python versions.
+  [hannosch]
 
 3.2.2 - 2011-04-09
 ------------------
