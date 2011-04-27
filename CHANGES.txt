@@ -4,6 +4,9 @@ Changelog
 3.2.4 - unreleased
 ------------------
 
+- Fix possible TypeError in `sortResults` method if only b_start but not b_size
+  has been provided.
+  [hannosch]
 
 3.2.3 - 2011-04-10
 ------------------
