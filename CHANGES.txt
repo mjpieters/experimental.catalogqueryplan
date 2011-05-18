@@ -4,6 +4,8 @@ Changelog
 3.2.5 - unreleased
 ------------------
 
+- Backport c121708 from ZCatalog, fixing the addition of two LazyCat's if any
+  of them had already been flattened.
 
 3.2.4 - 2011-04-27
 ------------------
