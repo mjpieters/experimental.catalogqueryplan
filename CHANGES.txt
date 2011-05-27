@@ -4,8 +4,12 @@ Changelog
 3.2.5 - unreleased
 ------------------
 
+- Backport c50071 from Products.CMFPlone to fix batch handling.
+  [hannosch]
+
 - Backport c121708 from ZCatalog, fixing the addition of two LazyCat's if any
   of them had already been flattened.
+  [hannosch]
 
 3.2.4 - 2011-04-27
 ------------------
