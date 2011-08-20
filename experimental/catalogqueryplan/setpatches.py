@@ -22,8 +22,8 @@ def patch_intersection(treetype, settype, module=None):
             # Avoid len of unsized or zero division
             return setintersection(o1, o2)
 
-        s1 = isinstance(o1, settype)
-        s2 = isinstance(o2, settype)
+        s1 = type(o1) is settype
+        s2 = type(o2) is settype
 
         if s1 or s2:
             # Only do this if one of them is a set, we are slower at treesets.

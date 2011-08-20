@@ -17,8 +17,8 @@ cpdef object ciiintersection(object o1, object o2):
     cdef bool s1, s2
     cdef object small, big, new, ins, has
 
-    s1 = isinstance(o1, IISet)
-    s2 = isinstance(o2, IISet)
+    s1 = type(o1) is IISet
+    s2 = type(o2) is IISet
 
     if s1 or s2:
         # Only do this if one of them is a set, we are slower at treesets.
