@@ -25,7 +25,9 @@ def patch_intersection(treetype, settype, module=None):
         s1 = type(o1) is settype
         s2 = type(o2) is settype
 
-        if s1 or s2:
+        if s1 and s2:
+            return setintersection(o1, o2)
+        elif s1 or s2:
             # Only do this if one of them is a set, we are slower at treesets.
             # We don't check the size of the treeset, so we sometimes loop over
             # a very small one, but there's no way to tell, without loading it.

@@ -4,11 +4,15 @@ Changelog
 3.2.6 - unreleased
 ------------------
 
-- Update to Cython 0.15.
+- Backport from e.btree: Update to Cython 0.15.
   [hannosch]
 
 - Backport from e.btree: Correct small/big assignment if only the first
   argument is a tree set.
+  [hannosch]
+
+- Backport from e.btree: Avoid intersection optimizations if both arguments
+  are non-tree sets.
   [hannosch]
 
 3.2.5 - 2011-05-27
