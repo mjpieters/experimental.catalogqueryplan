@@ -173,7 +173,7 @@ class TestIntersection(unittest.TestCase):
         self.pytiming(small, large)
 
     def test_large(self):
-        bigsize = BIGSETSIZE
+        bigsize = BIGSETSIZE / 10
         small = IITreeSet(xrange(bigsize))
         large = IITreeSet(xrange(bigsize))
         print '\nIntersection Large tree sets'
