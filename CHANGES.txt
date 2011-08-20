@@ -4,6 +4,9 @@ Changelog
 3.2.6 - unreleased
 ------------------
 
+- Backport from e.btree: Correct small/big assignment if only the first
+  argument is a tree set.
+  [hannosch]
 
 3.2.5 - 2011-05-27
 ------------------

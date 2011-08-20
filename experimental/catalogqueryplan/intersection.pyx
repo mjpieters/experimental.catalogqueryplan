@@ -29,8 +29,8 @@ cpdef object ciiintersection(object o1, object o2):
             small = o1
             big = o2
         elif s2 and len(o2) < SMALLSETSIZE:
-            small = o1
-            big = o2
+            small = o2
+            big = o1
         else:
             return iiintersection(o1, o2)
 

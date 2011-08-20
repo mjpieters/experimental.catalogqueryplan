@@ -33,8 +33,8 @@ def patch_intersection(treetype, settype, module=None):
                 small = o1
                 big = o2
             elif s2 and len(o2) < SMALLSETSIZE:
-                small = o1
-                big = o2
+                small = o2
+                big = o1
             else:
                 return setintersection(o1, o2)
 
