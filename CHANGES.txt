@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.2.7 - unreleased
+3.2.7 - 2011-08-23
 ------------------
 
 - Backport c122666 from ZCatalog, fixing batching restriction in early part
