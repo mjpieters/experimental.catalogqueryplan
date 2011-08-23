@@ -4,6 +4,9 @@ Changelog
 3.2.7 - unreleased
 ------------------
 
+- Backport c122666 from ZCatalog, fixing batching restriction in early part
+  of second half of the batch.
+  [davisagli, hannosch]
 
 3.2.6 - 2011-08-21
 ------------------

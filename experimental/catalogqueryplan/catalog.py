@@ -313,7 +313,7 @@ def sortResults(self, rs, sort_index, reverse=0, limit=None, merge=1,
                 b_size += overrun
             b_start = 0
         else:
-            b_start = b_end - b_start
+            b_start = rlen - b_end
         limit = b_start + b_size
 
     if merge and limit is None and (
